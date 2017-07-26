@@ -44,7 +44,7 @@ frame %>% select (MO_RR,monthFct,year) %>%
   scale_fill_viridis(discrete=T,option="D", direction=-1,begin=.1,end=.9) + 
   labs(x = "Precipitation (mm)", y = "Month of Year",
        title = "Distribution of Historical Monthly Rainfall in Bremen (1890-2016)",
-       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Date Center (CDC)",
+       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
   theme(legend.position = "none")
@@ -65,10 +65,12 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   scale_fill_viridis(discrete=T,option="D", direction=-1,begin=.1,end=.9) + 
   labs(x = "Total Yearly Precipitation (mm)", y = "Inteval",
        title = "Distribution of Historical Total Yearly Rainfall in Bremen (1891-2015)",
-       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Date Center (CDC)",
+       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
   theme(legend.position = "none")
+
+ggsave("rainJoy_decadal_yearlyTotal.png", width=8.3, height=5.8)
 
 ggsave("rainJoy_decadal_yearlyTotal.pdf", width=8.3, height=5.8)
 embed_fonts("rainJoy_decadal_yearlyTotal.pdf")
@@ -86,7 +88,7 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   scale_fill_viridis(discrete=T,option="D", direction=-1,begin=.1,end=.9) + 
   labs(x = "Maximum Monthly Precipitation (mm)", y = "Inteval",
        title = "Distribution of Historical Maximum Monthly Rainfall in Bremen (1891-2015)",
-       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Date Center (CDC)",
+       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
   theme(legend.position = "none")  
@@ -107,10 +109,14 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   scale_fill_viridis(discrete=T,option="D", direction=-1,begin=.1,end=.9) + 
   labs(x = "Month of Year Where Maximum Monthly Rainfall Occurs", y = "Inteval",
        title = "Distribution of Historical Peak Monthly Rainfall in Bremen (1891-2015)",
-       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Date Center (CDC)",
+       subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
   theme(legend.position = "none")    
 
+ggsave("rainJoy_decadal_monthlyPosition.png", width=8.3, height=5.8)
+
 ggsave("rainJoy_decadal_monthlyPosition.pdf", width=8.3, height=5.8)
 embed_fonts("rainJoy_decadal_monthlyPosition.pdf")
+
+
