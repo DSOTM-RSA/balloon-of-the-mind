@@ -120,3 +120,62 @@ ggsave("rainJoy_decadal_monthlyPosition.pdf", width=8.3, height=5.8)
 embed_fonts("rainJoy_decadal_monthlyPosition.pdf")
 
 
+# load daily data: downlaod from ftp://ftp-cdc.dwd.de/pub/CDC/
+daily <- read_delim("~/Desktop/daily/produkt_nieder_tag_18900101_20161231_00691.txt",
+                      ";", escape_double = FALSE, trim_ws = TRUE)
+
+# extract individual months and years
+dateStr <- as.character(daily$MESS_DATUM)
+dateNum <- substr(dateStr, 1, 6) %>% as.double()
+dateMonth <-substr(dateNum, 5, 6) %>% as.double()
+dateYear <- substr(dateNum, 1, 4) %>% as.double()
+
+# temporary data.frame for modifications
+frame <- mutate(daily, frameID = dateNum-dateNum[1],
+                month = dateMonth, year = dateYear)
+
+# convert factors to numeric and fix NaN
+frame$STATIONS_ID <-as.factor(frame$STATIONS_ID)
+frame$yearFct <-as.factor(frame$year)
+frame$monthFct <-as.factor(frame$month)
+frame$RS[frame$RS==-999] <-NA
+
+
+
+# historical maximum monthly  
+frame_01 <-frame %>% filter(year<=2015 & year>=1891) %>% 
+  mutate(grp = cut(year, breaks = c(1890,1915,1940,1965,1990,2015),
+                   labels=c("1891-1915","1916-1940","1941-1965","1966-1990","1991-2015"))) %>% 
+  select(RS,monthFct,yearFct,grp) %>% 
+  group_by(monthFct,yearFct,grp) %>% 
+  summarise(maxDay_Month=max(RS)) %>% ungroup() 
+
+
+frame_02 <- frame %>% filter(year<=2015 & year>=1891) %>% 
+  mutate(grp = cut(year, breaks = c(1890,1915,1940,1965,1990,2015),
+                   labels=c("1891-1915","1916-1940","1941-1965","1966-1990","1991-2015"))) %>% 
+  select(RS,monthFct,yearFct,grp) %>% 
+  group_by(monthFct,yearFct,grp) %>% 
+  summarise(tot_Month=sum(RS)) %>% ungroup() 
+
+frame_tmp<-frame_01 %>% 
+  mutate(dayContMonth = (maxDay_Month/frame_02$tot_Month)*100) %>% 
+  filter(dayContMonth>=50) %>% add_count(dayContMonth) %>% 
+  group_by(grp) %>% 
+  summarise(tots=sum(n)) %>% 
+  ggplot()+ geom_col(aes(x=grp,y=tots,fill=grp)) + 
+  scale_fill_viridis(discrete = T) + 
+  labs(x = "Inteval", y ="Number of Events (n)",
+  title = "Historical Single Day Extreme Rainfall Events (>50% Monthly Total) in Bremen (1891-2015)",
+  subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
+  caption = "github.com/DSOTM-RSA") +
+  theme_minimal(base_family = "Ubuntu Condensed", base_size = 13) +
+  theme(legend.position = "none")  
+
+
+frame_tmp
+
+ggsave("rainJoy_daily_Extreme.png", width=8.3, height=5.8)
+
+ggsave("rainJoy_daily_Extreme.pdf", width=8.3, height=5.8)
+embed_fonts("rainJoy_daily_Extreme.pdf")
