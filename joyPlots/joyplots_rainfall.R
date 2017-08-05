@@ -1,6 +1,6 @@
 ######################################################################################
 
-# playing with rainfall data and visualisation
+# playing with weather data and visualisation
 # Dan Gray, github.com/DSOTM-RSA
 
 # source inspiration for chart type: github.com/ikashnitsky
@@ -15,8 +15,11 @@ library(ggjoy)
 library(viridis)
 library(extrafont)
 
+
+where<-getwd()	# get home-dir
+
 # load monthly data: downlaod from ftp://ftp-cdc.dwd.de/pub/CDC/
-monthly <- read_delim("~/Desktop/monthly/produkt_nieder_monat_18900101_20161231_00691.txt",
+monthly <- read_delim("produkt_nieder_monat_18900101_20161231_00691.txt",
                       ";", escape_double = FALSE, trim_ws = TRUE)
 
 # extract individual months and years
@@ -46,11 +49,11 @@ frame %>% select (MO_RR,monthFct,year) %>%
        title = "Distribution of Historical Monthly Rainfall in Bremen (1890-2016)",
        subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
-  theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
+  theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")
 
-ggsave("rainJoy_monthly.pdf",  width=8.3, height=5.8)
-embed_fonts("rainJoy_monthly.pdf")
+ggsave(file=paste0(where,"/figs/joyPlot_monthly.pdf"),  width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/joyPlot_monthly.pdf"))
 
 
 # historical total yearly
@@ -67,13 +70,11 @@ frame %>% filter(year<=2015 & year>=1891) %>%
        title = "Distribution of Historical Total Yearly Rainfall in Bremen (1891-2015)",
        subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
-  theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
+  theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")
 
-ggsave("rainJoy_decadal_yearlyTotal.png", width=8.3, height=5.8)
-
-ggsave("rainJoy_decadal_yearlyTotal.pdf", width=8.3, height=5.8)
-embed_fonts("rainJoy_decadal_yearlyTotal.pdf")
+ggsave(file=paste0(where,"/figs/joyPlot_decadal_annual.pdf"),  width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_annual.pdf"))
 
 
 # historical maximum monthly  
@@ -90,11 +91,11 @@ frame %>% filter(year<=2015 & year>=1891) %>%
        title = "Distribution of Historical Maximum Monthly Rainfall in Bremen (1891-2015)",
        subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
-  theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
+  theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")  
 
-ggsave("rainJoy_decadal_monthlyMaximum.pdf",  width=8.3, height=5.8)
-embed_fonts("rainJoy_decadal_monthlyMaximum.pdf")
+ggsave(file=paste0(where,"/figs/joyPlot_decadal_monthlyMax.pdf"),  width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_monthlyMax.pdf"))
 
 
 # historical maximum peak rainfall month
@@ -111,17 +112,17 @@ frame %>% filter(year<=2015 & year>=1891) %>%
        title = "Distribution of Historical Peak Monthly Rainfall in Bremen (1891-2015)",
        subtitle = "Data: Der Deutsche Wetter Dienst: Climate Data Center (CDC)",
        caption = "github.com/DSOTM-RSA") +
-  theme_minimal(base_family = "Ubuntu Condensed", base_size = 15) +
-  theme(legend.position = "none")    
+  theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
+  theme(legend.position = "none")   
 
-ggsave("rainJoy_decadal_monthlyPosition.png", width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/joyPlot_decadal_monthly_pos.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_monthly_pos.pdf"))
 
-ggsave("rainJoy_decadal_monthlyPosition.pdf", width=8.3, height=5.8)
-embed_fonts("rainJoy_decadal_monthlyPosition.pdf")
+rm(dateMonth,dateNum,dateStr,dateYear,frame)
 
 
 # load daily data: downlaod from ftp://ftp-cdc.dwd.de/pub/CDC/
-daily <- read_delim("~/Desktop/daily/produkt_nieder_tag_18900101_20161231_00691.txt",
+daily <- read_delim("produkt_nieder_tag_18900101_20161231_00691.txt",
                       ";", escape_double = FALSE, trim_ws = TRUE)
 
 # extract individual months and years
@@ -140,9 +141,7 @@ frame$yearFct <-as.factor(frame$year)
 frame$monthFct <-as.factor(frame$month)
 frame$RS[frame$RS==-999] <-NA
 
-
-
-# historical maximum monthly  
+# historical maximum daily withn a month  
 frame_01 <-frame %>% filter(year<=2015 & year>=1891) %>% 
   mutate(grp = cut(year, breaks = c(1890,1915,1940,1965,1990,2015),
                    labels=c("1891-1915","1916-1940","1941-1965","1966-1990","1991-2015"))) %>% 
@@ -150,7 +149,7 @@ frame_01 <-frame %>% filter(year<=2015 & year>=1891) %>%
   group_by(monthFct,yearFct,grp) %>% 
   summarise(maxDay_Month=max(RS)) %>% ungroup() 
 
-
+# historical total withn a month 
 frame_02 <- frame %>% filter(year<=2015 & year>=1891) %>% 
   mutate(grp = cut(year, breaks = c(1890,1915,1940,1965,1990,2015),
                    labels=c("1891-1915","1916-1940","1941-1965","1966-1990","1991-2015"))) %>% 
@@ -158,12 +157,16 @@ frame_02 <- frame %>% filter(year<=2015 & year>=1891) %>%
   group_by(monthFct,yearFct,grp) %>% 
   summarise(tot_Month=sum(RS)) %>% ungroup() 
 
-frame_tmp<-frame_01 %>% 
+# lookup table join and summarise
+frame_join<-frame_01 %>% 
   mutate(dayContMonth = (maxDay_Month/frame_02$tot_Month)*100) %>% 
   filter(dayContMonth>=50) %>% add_count(dayContMonth) %>% 
   group_by(grp) %>% 
-  summarise(tots=sum(n)) %>% 
-  ggplot()+ geom_col(aes(x=grp,y=tots,fill=grp)) + 
+  summarise(tots=sum(n))
+
+# plot n heavy rainfall "events" per interval
+frame_join %>% 
+  ggplot() + geom_col(aes(x=grp,y=tots,fill=grp)) + 
   scale_fill_viridis(discrete = T) + 
   labs(x = "Inteval", y ="Number of Events (n)",
   title = "Historical Single Day Extreme Rainfall Events (>50% Monthly Total) in Bremen (1891-2015)",
@@ -172,10 +175,6 @@ frame_tmp<-frame_01 %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 13) +
   theme(legend.position = "none")  
 
+ggsave(file=paste0(where,"/figs/joyPlot_daily_extreme.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/joyPlot_daily_extreme.pdf"))
 
-frame_tmp
-
-ggsave("rainJoy_daily_Extreme.png", width=8.3, height=5.8)
-
-ggsave("rainJoy_daily_Extreme.pdf", width=8.3, height=5.8)
-embed_fonts("rainJoy_daily_Extreme.pdf")
