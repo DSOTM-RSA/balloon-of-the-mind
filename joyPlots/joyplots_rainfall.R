@@ -52,8 +52,9 @@ frame %>% select (MO_RR,monthFct,year) %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")
 
-ggsave(file=paste0(where,"/figs/joyPlot_monthly.pdf"),  width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/joyPlot_monthly.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/monthly.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/monthly.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/monthly.pdf"))
 
 
 # historical total yearly
@@ -73,8 +74,9 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")
 
-ggsave(file=paste0(where,"/figs/joyPlot_decadal_annual.pdf"),  width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_annual.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/decadal.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/decadal.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/decadal.pdf"))
 
 
 # historical maximum monthly  
@@ -94,8 +96,9 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")  
 
-ggsave(file=paste0(where,"/figs/joyPlot_decadal_monthlyMax.pdf"),  width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_monthlyMax.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/monthlyMaximum.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/monthlyMaximum.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/monthlyMaximum.pdf"))
 
 
 # historical maximum peak rainfall month
@@ -115,8 +118,9 @@ frame %>% filter(year<=2015 & year>=1891) %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 14) +
   theme(legend.position = "none")   
 
-ggsave(file=paste0(where,"/figs/joyPlot_decadal_monthly_pos.pdf"), width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/joyPlot_decadal_monthly_pos.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/monthlyPosition.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/monthlyPosition.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/monthlyPosition.pdf"))
 
 rm(dateMonth,dateNum,dateStr,dateYear,frame)
 
@@ -175,6 +179,7 @@ frame_join %>%
   theme_minimal(base_family = "Ubuntu Condensed", base_size = 13) +
   theme(legend.position = "none")  
 
-ggsave(file=paste0(where,"/figs/joyPlot_daily_extreme.pdf"), width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/joyPlot_daily_extreme.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/dailyExtreme.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/dailyExtreme.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/dailyExtreme.pdf"))
 

@@ -55,6 +55,7 @@ ggplot(sun,aes(Jahr,amount)) + geom_line(color="black") +
 panel.background = element_blank(), axis.line = element_line(colour = "black"),
 strip.text.x = element_text(size = 8)) 
 
-ggsave(file=paste0(where,"/figs/geofacet_sunshineTrends.pdf"),  width=8.3, height=5.8)
-embed_fonts(file=paste0(where,"/figs/geofacet_sunshineTrends.pdf"))
+ggsave(file=paste0(where,"/figs/pngs/sunshineTrend.png"), width=8.3, height=5.8)
+ggsave(file=paste0(where,"/figs/sunshineTrend.pdf"), width=8.3, height=5.8)
+embed_fonts(file=paste0(where,"/figs/sunshineTrend.pdf"))
 
