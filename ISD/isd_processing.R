@@ -4,6 +4,8 @@
 library(lubridate) # simple conversion of dates
 library(tidyverse) # loading the tidyverse
 
+where<-getwd()	# get home-dir
+
 
 raw.data <- read_delim("statTabsAgg.tsv","\t", escape_double = FALSE, trim_ws = TRUE)  
 raw.data$yrs <-year(raw.data$date) 
@@ -55,21 +57,25 @@ ggplot(df.aggregates) +
   geom_rect(aes(group=sgs,fill=mean.speed,ymax=pieces.max,ymin=pieces,xmax=enr_frc,xmin=0)) + 
   coord_polar(theta="y") +
   scale_fill_continuous(low = "blue",high = "red","MWS [m.s.-1]") + theme_bw()
-ggsave("windRose_mean.svg")
+
+ggsave(file=paste0(where,"/figs/windRose_mean.svg"))
 
 
 ggplot(df.locales) + 
   geom_rect(aes(group=sgs,fill=mean.speed,ymax=pieces.max,ymin=pieces,xmax=enr_frc,xmin=0)) + 
   coord_polar(theta="y") + facet_wrap(~usaf_station,ncol = 4) +
   scale_fill_continuous(low = "blue",high = "red","MWS [m.s.-1]") + theme_bw()
-ggsave("windRose_locales.svg")
+
+ggsave(file=paste0(where,"/figs/windRose_locales.svg"))
 
 
 bigPlot<-ggplot(df.yearly) + 
   geom_rect(aes(group=sgs,fill=mean.speed,ymax=pieces.max,ymin=pieces,xmax=enr_frc,xmin=0)) + 
   coord_polar(theta="y") + facet_wrap(~usaf_station+yrs,ncol = 12) +
   scale_fill_continuous(low = "blue",high = "red","MWS [m.s.-1]") + theme_bw()
-ggsave("very-large-canvas.svg",width = 40, height = 30, units = "in" )
+
+ggsave(file=paste0(where,"/figs/very_large_canvas.svg"),width =40, height = 30, units ="in")
+
 
 # one can see station 102340 is problematic (2010,2011,2012)
 
