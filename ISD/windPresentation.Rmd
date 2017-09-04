@@ -1,0 +1,48 @@
+---
+title: "Wind"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Hide code and messages
+knitr::opts_chunk$set(echo = FALSE); knitr::opts_chunk$set(warning = FALSE) 
+
+# Loading libraries
+library(lubridate) # for dates
+library(tidyverse) # loading the tidyverse
+library(xts)
+library(dygraphs)
+```
+
+```{r load_data}
+raw.data <- read_delim("statTabsAgg.tsv","\t", 
+                       escape_double = FALSE, trim_ws = TRUE)  
+```
+
+
+```{r data_processing}
+
+dat<-raw.data %>% mutate(year=year(raw.data$date),
+                    month=month(raw.data$date)) %>% 
+  unite("times",date,time,sep="-")
+
+rm(raw.data)
+
+# make time scale for dygraphs
+track<-as.POSIXct(dat$times,format="%Y-%m-%d-%H%M")
+  
+# making wind roses
+pieces <- c(0,30,60,90,120,150,180,210,240,270,300,330)
+dat$sgs <- findInterval(dat$wind_direction,pieces)
+
+# identify missing values 
+dat$wind_direction[dat$wind_direction == 999] <- NA
+dat$wind_speed[dat$wind_speed >= 999] <- NA
+
+# use only complete cases
+wind.samples <- dat %>% filter(complete.cases(.))
+
+rm(dat)
+```
+
+
