@@ -14,9 +14,11 @@ import cv2
 import os
 import json
 
+
+# compute hashes for individual images
 def dhash(image, hashSize = 8):
-    # resize input image, to have a single column width
     
+    # resize input image, to have a single column width
     resized = cv2.resize(image, (hashSize + 1, hashSize))
     
     # compute relative horizontal gradient
@@ -26,7 +28,7 @@ def dhash(image, hashSize = 8):
     return sum([2 ** i for (i, v) in enumerate(diff.flatten()) if v])
     
 
-# construct the argument parse and parse the arguments
+# construct the argument parser, and the parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-a", "--haystack", required=True,
 	help="dataset of images to search through (i.e., the haytack)")
@@ -43,7 +45,6 @@ needlePaths = list(paths.list_images(args["needles"]))
 
 # remove the `` character from an files containing a space
 # assuming you are on a Unix machine
-
 if sys.platform != "win32":
     haystackPaths = [p.replace("\\", "") for p in haystackPaths]
     needlePaths = [p.replace("\\", "") for p in needlePaths]
@@ -52,7 +53,6 @@ if sys.platform != "win32":
 # get the base sub-directories for the needle paths
 # initiliaze the directory that will map the image hash to corresponding image hashes
 # start the timer
-
 BASE_PATHS = set([p.split(os.path.sep)[-2] for p in needlePaths])
 haystack = {}
 start = time.time()
@@ -68,6 +68,8 @@ for p in haystackPaths:
     
     # convert to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # calculate image hash
     imageHash = dhash(image)
     
     # update the haystack directory
@@ -82,7 +84,6 @@ for p in haystackPaths:
 print("[INFO] processed {} images in {:.2f} seconds".format(
 	len(haystack), time.time() - start))
 print("[INFO] computing hashes for needles...")
-
 
 
 # loop over the needle paths
@@ -104,6 +105,7 @@ for p in needlePaths:
  
 	# loop over all matched paths
 	for matchedPath in matchedPaths:
+     
 		# extract the subdirectory from the image path
 		b = p.split(os.path.sep)[-2]
  
@@ -121,6 +123,22 @@ print("[INFO] check the following directories...")
 for b in BASE_PATHS:
 	print("[INFO] {}".format(b))
  
+#################################### 
+ ## Diagnostic info
+ 
+print(type(haystack))
+print(imageHash)
+print(haystack)
+print(type(matchedPaths))
+
+with open('filename.txt', mode='wt', encoding='utf-8') as myfile:
+    myfile.write('\n'.join(BASE_PATHS))
+
+print(haystack.keys())
+
+
+
+################
 
 # export option 1
 haystackJSON = {'haystack': haystack}
