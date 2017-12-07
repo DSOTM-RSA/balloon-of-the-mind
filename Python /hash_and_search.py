@@ -15,6 +15,9 @@ import os
 import json
 
 
+# usage: python hash_and_search.py --haystack oldImages/ --needles newImages/
+
+
 # compute hashes for individual images
 def dhash(image, hashSize = 8):
     
@@ -85,43 +88,72 @@ print("[INFO] processed {} images in {:.2f} seconds".format(
 	len(haystack), time.time() - start))
 print("[INFO] computing hashes for needles...")
 
+needle = {}
+start = time.time()
+
+# loop over haystack paths
+for p in needlePaths:
+    # load the image from disk
+    image = cv2.imread(p)
+    
+    if image is None:
+        continue
+    
+    # convert to grayscale
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # calculate image hash
+    imageHash = dhash(image)
+    
+    # update the haystack directory
+    l = needle.get(imageHash, [1])
+    l.append(p)
+    needle[imageHash] = l
+
+
+# show timing on hashing
+# show timing for hashing haystack images, then start computing the
+# hashes for needle images
+print("[INFO] processed {} images in {:.2f} seconds".format(
+	len(haystack), time.time() - start))
+
 
 # loop over the needle paths
-for p in needlePaths:
+#for p in needlePaths:
 	# load the image from disk
-	image = cv2.imread(p)
+#	image = cv2.imread(p)
  
 	# if the image is None then we could not load it from disk (so
 	# skip it)
-	if image is None:
-		continue
+#	if image is None:
+#		continue
  
 	# convert the image to grayscale and compute the hash
-	image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	imageHash = dhash(image)
+#	image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#	imageHash = dhash(image)
  
 	# grab all image paths that match the hash
-	matchedPaths = haystack.get(imageHash, [])
+#	matchedPaths = haystack.get(imageHash, [])
  
 	# loop over all matched paths
-	for matchedPath in matchedPaths:
+#	for matchedPath in matchedPaths:
      
-		# extract the subdirectory from the image path
-		b = p.split(os.path.sep)[-2]
+#		# extract the subdirectory from the image path
+#		b = p.split(os.path.sep)[-2]
  
 		# if the subdirectory exists in the base path for the needle
 		# images, remove it
-		if b in BASE_PATHS:
-			BASE_PATHS.remove(b)
+#		if b in BASE_PATHS:
+#			BASE_PATHS.remove(b)
 
 
 # display directories to check
-print("[INFO] check the following directories...")
+#print("[INFO] check the following directories...")
  
 
 # loop over each subdirectory and display it
-for b in BASE_PATHS:
-	print("[INFO] {}".format(b))
+#for b in BASE_PATHS:
+#	print("[INFO] {}".format(b))
  
 #################################### 
  ## Diagnostic info
@@ -129,7 +161,7 @@ for b in BASE_PATHS:
 print(type(haystack))
 print(imageHash)
 print(haystack)
-print(type(matchedPaths))
+#print(type(matchedPaths))
 
 with open('filename.txt', mode='wt', encoding='utf-8') as myfile:
     myfile.write('\n'.join(BASE_PATHS))
@@ -146,10 +178,11 @@ haystackJSON = {'haystack': haystack}
 with open('file.txt', 'w') as file:
      file.write(json.dumps(haystackJSON))
 
+
      
-# export option 2
-# nice way of extracting hashes
-fout = "library_of_hay.txt"
+# Export Option To Text File
+
+fout = "hay.txt"
 fo = open(fout, "w")
 
 for k, v in haystack.items():
@@ -158,3 +191,15 @@ for k, v in haystack.items():
 fo.close()     
 
 print("INFO","haystack hash-data is located here:",fout)
+
+
+
+fout = "needle.txt"
+fo = open(fout, "w")
+
+for k, v in needle.items():
+    fo.write(str(k) + ','+ str(v) + '\n')
+
+fo.close()     
+
+print("INFO","needle hash-data is located here:",fout)
