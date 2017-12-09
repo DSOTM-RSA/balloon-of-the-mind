@@ -6,10 +6,13 @@ FNR==NR {a[NR]=$1; next};
 END{for (i in a) if (a[i] in b) print b[a[i]]}
 ' >matchedPairs.txt hay.txt needle.txt
 
-
+# extract dirs of matchedPairs
 awk '{$1=""; print $0}' matchedPairs.txt > dirsDuplicates.txt
 
+# remove unwanted characters
+awk '{sub(/].*/,""); print}' dirsDuplicates.txt > removedChr.txt 
 
+# print message
 echo -e "Finished labelling duplicates"
 
 #gawk -F, '
