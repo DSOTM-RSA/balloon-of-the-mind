@@ -18,7 +18,7 @@ import json
 # usage: python hash_and_search.py --haystack oldImages/ --needles newImages/
 
 
-# compute hashes for individual images
+# create function to compute hashes for individual images
 def dhash(image, hashSize = 8):
     
     # resize input image, to have a single column width
@@ -54,9 +54,10 @@ if sys.platform != "win32":
 
 
 # get the base sub-directories for the needle paths
+# BASE_PATHS = set([p.split(os.path.sep)[-2] for p in needlePaths])
+
 # initiliaze the directory that will map the image hash to corresponding image hashes
 # start the timer
-BASE_PATHS = set([p.split(os.path.sep)[-2] for p in needlePaths])
 haystack = {}
 start = time.time()
 
@@ -81,15 +82,18 @@ for p in haystackPaths:
     haystack[imageHash] = l
 
 
-# show timing on hashing
-# show timing for hashing haystack images, then start computing the
-# hashes for needle images
+
+# show timing for hashing haystack images, 
 print("[INFO] processed {} images in {:.2f} seconds".format(
 	len(haystack), time.time() - start))
 print("[INFO] computing hashes for needles...")
 
+
+
+# then start computing the hashes for needle images
 needle = {}
 start = time.time()
+
 
 # loop over haystack paths
 for p in needlePaths:
@@ -112,10 +116,8 @@ for p in needlePaths:
 
 
 # show timing on hashing
-# show timing for hashing haystack images, then start computing the
-# hashes for needle images
 print("[INFO] processed {} images in {:.2f} seconds".format(
-	len(haystack), time.time() - start))
+	len(needle), time.time() - start))
 
 
 # loop over the needle paths
@@ -155,33 +157,34 @@ print("[INFO] processed {} images in {:.2f} seconds".format(
 #for b in BASE_PATHS:
 #	print("[INFO] {}".format(b))
  
-#################################### 
+
+
+###################
  ## Diagnostic info
  
-print(type(haystack))
-print(imageHash)
-print(haystack)
+#print(type(haystack))
+#print(imageHash)
+#print(haystack)
 #print(type(matchedPaths))
 
-with open('filename.txt', mode='wt', encoding='utf-8') as myfile:
-    myfile.write('\n'.join(BASE_PATHS))
+#with open('filename.txt', mode='wt', encoding='utf-8') as myfile:
+#    myfile.write('\n'.join(BASE_PATHS))
 
-print(haystack.keys())
+#print(haystack.keys())
 
 
 
 ################
 
 # export option 1
-haystackJSON = {'haystack': haystack}
+#haystackJSON = {'haystack': haystack}
 
-with open('file.txt', 'w') as file:
-     file.write(json.dumps(haystackJSON))
+#with open('file.txt', 'w') as file:
+#     file.write(json.dumps(haystackJSON))
 
 
      
-# Export Option To Text File
-
+# export option to text file :: hay
 fout = "hay.txt"
 fo = open(fout, "w")
 
@@ -190,10 +193,10 @@ for k, v in haystack.items():
 
 fo.close()     
 
-print("INFO","haystack hash-data is located here:",fout)
+print("[INFO]","haystack hash-data is located here:",fout)
 
 
-
+# export option to text file :: needle
 fout = "needle.txt"
 fo = open(fout, "w")
 
@@ -202,4 +205,4 @@ for k, v in needle.items():
 
 fo.close()     
 
-print("INFO","needle hash-data is located here:",fout)
+print("[INFO]","needle hash-data is located here:",fout)

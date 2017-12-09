@@ -9,6 +9,9 @@ END{for (i in a) if (a[i] in b) print b[a[i]]}
 
 awk '{$1=""; print $0}' matchedPairs.txt > dirsDuplicates.txt
 
+
+echo -e "Finished labelling duplicates"
+
 #gawk -F, '
 #FNR==NR {a[NR]=$1; next};
 #{b[$1]=$0} END{for (i in a) if (a[i] in b) print b[a[i]]}
