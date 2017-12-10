@@ -84,9 +84,9 @@ for p in haystackPaths:
 
 
 # show timing for hashing haystack images, 
-print("[INFO] processed {} images in {:.2f} seconds".format(
+print("[INFO]: processed {} images in {:.2f} seconds".format(
 	len(haystack), time.time() - start))
-print("[INFO] computing hashes for needles...")
+print("[INFO]: computing hashes for needles...")
 
 
 
@@ -116,7 +116,7 @@ for p in needlePaths:
 
 
 # show timing on hashing
-print("[INFO] processed {} images in {:.2f} seconds".format(
+print("[INFO]: processed {} images in {:.2f} seconds".format(
 	len(needle), time.time() - start))
 
 
@@ -193,7 +193,7 @@ for k, v in haystack.items():
 
 fo.close()     
 
-print("[INFO]","haystack hash-data is located here:",fout)
+print("[INFO]: haystack hash-data is located here:",fout)
 
 
 # export option to text file :: needle
@@ -205,4 +205,4 @@ for k, v in needle.items():
 
 fo.close()     
 
-print("[INFO]","needle hash-data is located here:",fout)
+print("[INFO]: needle hash-data is located here:",fout)
