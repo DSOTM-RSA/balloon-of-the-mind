@@ -1,5 +1,7 @@
 # porkBelly
 
-Micro-computing Projects Workshop
+Micro-computing, programming and design projects workshop
 
-- code-snipepts, links and project ideas for raspberry Pi, microcomputing and science-hack projects 
+- code-snipepts for raspberry Pi 
+- ideas for microcomputing
+- cad and design  
