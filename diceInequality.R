@@ -3,10 +3,10 @@
 # Kinetic Energy Model
 
 # define parameters
-players <- 10
-interactions<-1000
+players <- 200
+interactions<-20000
 
-dat <- matrix(c(1:players,rep(1000,players)),nrow=players)
+dat <- matrix(c(1:players,rep(1000,players),rep(0,players)),nrow=players)
 
 # create simulation function
 energies <- function(x){
@@ -21,6 +21,8 @@ energies <- function(x){
     x[Wpos,2] <- x[Wpos,2]+transfer
     x[Lpos,2] <- x[Lpos,2]-transfer
     
+    x[Wpos,3] <- x[Wpos,3]+1
+    x[Lpos,3] <- x[Lpos,3]+1
     #vals <- x[,2]
 
   } else {
@@ -28,9 +30,12 @@ energies <- function(x){
     x[Wpos,2] <-x[Wpos,2]
     x[Lpos,2] <-x[Lpos,2]
     
+    x[Wpos,3] <- x[Wpos,3]+1
+    x[Lpos,3] <- x[Lpos,3]+1
+    
   }
   
-  vals <- x[,2]
+  vals <- x[,2:3]
 
 }
 
@@ -44,35 +49,47 @@ energies_outcomes <- matrix(ncol=interactions,nrow=players)
 i=1
 for (i in i:ncol(energies_outcomes)) {
   
-  res<-energies(dat)
+  results<-energies(dat) # get matrix of results
   
-  energies_outcomes[,i] <-res
+  trn <-results[,1] # extract transaction
+  cnt <-results[,2] # extract count of transaction
   
-  dat[,2]<-energies_outcomes[,i] # reassign outcome to initial
+  #cnt<-energies(dat[,2])
   
+  #energies_outcomes[,i] <-res
+  energies_outcomes[,i] <-trn # pass transaction ledger to array
+  
+  dat[,2]<-energies_outcomes[,i] # assign transaction to balance sheet 
+  dat[,3]<-cnt # assign cnt to balance sheet
 }  
 
+outcomes_ranked <-dat[order(dat[,2],decreasing=TRUE),]
+
+rank_01 <- players/100
+rank_99 <- players - (players/100)+1
+
+trajs_01 <- outcomes_ranked[1:rank_01,1]
+trajs_99 <- outcomes_ranked[rank_99:players,1]
 
 
-sorted <-energies_outcomes[order(rowMeans(energies_outcomes), 
-                                 decreasing = T),]
-
-val_top1 <- sort(energies_outcomes[,max(interactions)],
-                 decreasing=T)[1]
-
-val_bot50 <- sum(sort(energies_outcomes[,max(interactions)],
-                      decreasing=F)[1:5])
-
-top1 <- round((val_top1/val_bot50)*100,1)
+paths_01 <- energies_outcomes[trajs_01,]
+paths_99 <- energies_outcomes[trajs_99,]
 
 
 # plot the data
-matplot(t(energies_outcomes),type="l",lty = 1,lwd=0.5,
-        main=paste0(
-          "Upper 1% have ",top1,
-          "% of the Total Wealth of the Bottom 50%"))
+par(mfrow=c(1,2))
+
+matplot(t(paths_01),type="l",lty = 1,lwd=0.5,
+        ylim=c(0,outcomes_ranked[1,2]+1000),
+        ylab="Amount",xlab="Iterations")
+
+matplot(t(paths_99),type="l",lty = 1,lwd=0.5,
+        ylim=c(0,outcomes_ranked[1,2]+1000),
+        ylab="Amount",xlab="Iterations")
 
 
+
+##############################################
 
 
   # define parameters
