@@ -28,7 +28,6 @@ energies <- function(x){
     
     x[Wpos,3] <- x[Wpos,3]+1
     x[Lpos,3] <- x[Lpos,3]+1
-    #vals <- x[,2]
 
   } else {
     
@@ -45,6 +44,39 @@ energies <- function(x){
 }
 
 
+stepper <- function(nsteps,parts,game) {
+  
+  #filler <- matrix(ncol=nsteps,nrow=parts)
+  #filler[,] <-rep(0,parts)
+
+  for (i in seq_len(nsteps))
+    
+    game <-energies(game)
+
+  # extract transaction and counter
+  trn <-game[,2] 
+  cnt <-game[,3] 
+  
+  sorts <- game[order(game[,2],decreasing=TRUE),]
+  values <- sorts[,2]
+
+  #plot(game[,2],type="l")
+  #trn
+  #filler[,]<-cnt
+  #filler
+  values
+}
+
+
+a<-stepper(1000,100,dat)
+
+a
+
+walks<-replicate(200,stepper(100,100,dat))
+
+matplot(t(walks),type="l", xlab="Replicates")
+
+
 
 single_Energy<-energies(dat)
 
@@ -54,46 +86,50 @@ energies_ranks <- matrix(ncol=interactions,nrow=players)
 
 # diagnostics
 energies_splits <- matrix(ncol=4,nrow=interactions)
+  
+  # iterate through  main loop
+  i=1
+  for (i in i:ncol(energies_transactions)) {
+    
+    results<-energies(dat) # get matrix of results
+    
+    # extract transaction and counter
+    trn <-results[,2] 
+    cnt <-results[,3] 
+    
+    #cnt<-energies(dat[,2])
+    #energies_transactions[,i] <-res
+    
+    # pass balances to log
+    energies_transactions[,i] <-trn 
+    
+    # pass balances to balance sheet
+    #dat[,2]<-energies_transactions[,i]  
+    dat[,2]<-trn
+    dat[,3]<-cnt 
+    
+    #
+    
+    sorts <- results[order(results[,2],decreasing=TRUE),]
+    energies_ranks[,i] <-sorts[,1]
+    
+    pos01_unit <- sorts[1,1]
+    pos01_val <- sorts[1,2]
+    
+    pos50_val <-sum(sorts[rank_50:players,2])
+    
+    energies_splits[i,1] <-pos01_unit
+    energies_splits[i,2] <-pos01_val
+    energies_splits[i,3] <-pos50_val
+    energies_splits[i,4] <-round((pos01_val/pos50_val)*100,1)
+    
+    
+    
+  } 
+  
+                      
 
-# iterate through main loop
-i=1
-for (i in i:ncol(energies_transactions)) {
-  
-  results<-energies(dat) # get matrix of results
-  
-  # extract transaction and counter
-  trn <-results[,2] 
-  cnt <-results[,3] 
-  
-  #cnt<-energies(dat[,2])
-  #energies_transactions[,i] <-res
-  
-  # pass balances to log
-  energies_transactions[,i] <-trn 
-  
-  # pass balances to balance sheet
-  #dat[,2]<-energies_transactions[,i]  
-  dat[,2]<-trn
-  dat[,3]<-cnt 
-  
-  #
-  
-  sorts <- results[order(results[,2],decreasing=TRUE),]
-  energies_ranks[,i] <-sorts[,1]
-  
-  pos01_unit <- sorts[1,1]
-  pos01_val <- sorts[1,2]
-  
-  pos50_val <-sum(sorts[rank_50:players,2])
-  
-  energies_splits[i,1] <-pos01_unit
-  energies_splits[i,2] <-pos01_val
-  energies_splits[i,3] <-pos50_val
-  energies_splits[i,4] <-round((pos01_val/pos50_val)*100,1)
-  
-  
-  
-}  
+ 
 
 # calculating length of streaks
 energies_splits_df <- as.data.frame(energies_splits)
@@ -147,11 +183,11 @@ matplot(t(paths_99),type="l",lty = 1,lwd=0.5,
 
 
   # define parameters
-  players <- 50
-  interactions<-100
+  players <- 10
+  interactions<-250
   
   # make intial distribution
-  x <- matrix(rep(interactions,players),nrow = players)
+  dat <- matrix(rep(interactions,players),nrow = players)
   
   # assign dice "multipliers" 
   dice <-c(-0.8,-0.4,-0.2,0.2,0.4,0.8)
@@ -164,12 +200,8 @@ matplot(t(paths_99),type="l",lty = 1,lwd=0.5,
     newTot <- sum(int) # sum of new balance
     
     fac <- (newTot-beg)/newTot # calculate factor
-    duty <- int-(fac*int) # apply to keep total amount constant
-    
-    #assign("x",duty)
-    
-    #return(c(int,beg,sum(int),fac,duty,sum(duty)))
-    
+    duty <- int-(fac*int) # apply to keep total wealth constant
+  
     return(duty) # return new distribution to players
   }
   
@@ -177,17 +209,16 @@ matplot(t(paths_99),type="l",lty = 1,lwd=0.5,
   holder <- matrix(ncol=interactions,nrow=players)
   
   # iterate through main loop
-  
   i=1
   for (i in i:ncol(holder)) {
     
-    res<-apply(x, MARGIN = 2,FUN = diceGame)
+    results<-apply(dat, MARGIN = 2,FUN = diceGame) # iterate draws down columns
     
-    holder[,i] <-res
+    holder[,i] <-results # pass results to holder
     
-    x<-res # reassign x to latest outcome
+    dat<-results # reassign latest outcome to balance sheet
     
-  }  
+}
 
   
 matplot(t(holder),type = "l",
@@ -196,5 +227,5 @@ matplot(t(holder),type = "l",
         ylab="Wealth",lty = 1,lwd = 0.5)
 
 # single run
-oneTime<-apply(x,MARGIN = 2,FUN = times)
+oneTime<-apply(dat,MARGIN = 2,FUN = diceGame)
 
