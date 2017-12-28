@@ -2,18 +2,16 @@ library(tidyverse)
 
 # Kinetic Energy Model
 
-# define parameters
-players <- 100
-interactions<-10000
+# define global parameters
+# these are passed as the default for the stepper function
+players <- 10
+interactions<-1000
 
-rank_01 <- players/100
-rank_50 <- players - (players/2)+1
+# build intial gameset
+dat <- matrix(c(1:players,rep(100,players),
+                rep(0,players)),nrow=players)
 
-# build intial game
-dat <- matrix(c(1:players,rep(1000,players),rep(0,players)),nrow=players)
-
-
-# create simulation function
+# create energy-simulation function
 energies <- function(x){
   
   Wpos <- sample(x[,1],1)
@@ -44,38 +42,94 @@ energies <- function(x){
 }
 
 
-stepper <- function(nsteps,parts,game) {
-  
-  #filler <- matrix(ncol=nsteps,nrow=parts)
-  #filler[,] <-rep(0,parts)
+# prepare diagnostic metrics (only valid for players >=100)
+rank_01 <- players/100
+rank_50 <- players - (players/2)+1
 
-  for (i in seq_len(nsteps))
+
+# create stepper function
+stepper <- function(nsteps=interactions,agents=players,DF) {
+  
+  # prepare logbook of transactions
+  transactions <- matrix(ncol=nsteps,nrow=agents)
+  
+  # prepare diagnostics 
+  diagnostics <- matrix(ncol=4,nrow=interactions)
+
+  for (i in seq_len(nsteps)){
     
-    game <-energies(game)
+    # pass function results back to DF
+    DF <-energies(DF)
+    
+    # extract transaction and counter
+    trn <-DF[,2] 
+    cnt <-DF[,3] 
+    
+    # sorting of results for diagnostics
+    sorts <- DF[order(DF[,2],decreasing=TRUE),]
+    
+    pos01_unit <- sorts[1,1]
+    
+    pos01_val <- sorts[1,2]
+    pos50_val <-sum(sorts[rank_50:players,2])
+    
+    diagnostics[i,1] <-pos01_unit
+    diagnostics[i,2] <-pos01_val
+    diagnostics[i,3] <-pos50_val
+    diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
+    
+    
+    # pass per-round balances to logbook
+    transactions[,i]<-trn
 
-  # extract transaction and counter
-  trn <-game[,2] 
-  cnt <-game[,3] 
+  }
   
-  sorts <- game[order(game[,2],decreasing=TRUE),]
-  values <- sorts[,2]
+    # return data
+    #completeRecord <-rbind(transactions,t(diagnostics))
+    #return(completeRecord)
+    
+    # simple case for overall wealth-split trajectories
+    return(diagnostics)
 
-  #plot(game[,2],type="l")
-  #trn
-  #filler[,]<-cnt
-  #filler
-  values
 }
 
+# No 1 Simple Diagnostic Case
+# save to object
+output<-stepper(,,dat)
 
-a<-stepper(1000,100,dat)
+# USING REPLICATE TO CARRY OUT MANY EXPERIMENTS
+# repeating N times (100 is ~30mB)
+reps <- 400
 
-a
+walks<-replicate(reps,stepper(,,dat))
 
-walks<-replicate(200,stepper(100,100,dat))
+# and plot first outcome
+plot(walks[,4,1],type="l")
 
-matplot(t(walks),type="l", xlab="Replicates")
+# get "average outcome"
+avgOutcomes <-rowMeans(walks,dims=2)
+plot(avgOutcomes[,4],type="l")
 
+# extract index and avgs into long vector for CI plot
+a<-rep(1:interactions,reps)
+b<-c(walks[,4,])
+join<-as.data.frame(cbind(a,b))
+
+ggplot(aes(a,b),data=join) + geom_smooth()
+
+
+# No 2 Return All Data
+# save to object
+output<-stepper(,,dat)
+
+# two different plots
+matplot(t(output[1:players,]),type="l")
+plot(output[players+4,],type="l")
+
+# and plotting
+matplot(t(walks[1:10,,2]),type="l", xlab="Game Length")
+plot(walks[players+4,,2],type="l", 
+     xlab="Game Length", ylab = "Top 1% to Bottom 50% Ratio")
 
 
 single_Energy<-energies(dat)
@@ -148,36 +202,6 @@ energies_splits_df %>% group_by(V2,V1) %>% group_size()%>%
 
 # main plot
 plot(energies_splits[,4],type="l")
-
-
-
-
-# plot WIP
-outcomes_ranked <-dat[order(dat[,2],decreasing=TRUE),]
-
-rank_01 <- players/100
-rank_99 <- players - (players/100)+1
-
-trajs_01 <- outcomes_ranked[1:rank_01,1]
-trajs_99 <- outcomes_ranked[rank_99:players,1]
-
-
-paths_01 <- energies_transactions[trajs_01,]
-paths_99 <- energies_transactions[trajs_99,]
-
-
-# plot the data
-par(mfrow=c(1,1))
-
-matplot(t(paths_01),type="l",lty = 1,lwd=0.5,
-        ylim=c(0,outcomes_ranked[1,2]+1000),
-        ylab="Amount",xlab="Iterations")
-
-matplot(t(paths_99),type="l",lty = 1,lwd=0.5,
-        ylim=c(0,outcomes_ranked[1,2]+1000),
-        ylab="Amount",xlab="Iterations")
-
-
 
 ##############################################
 
