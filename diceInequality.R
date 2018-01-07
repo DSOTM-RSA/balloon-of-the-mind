@@ -50,6 +50,10 @@ rank_50 <- players - (players/2)+1
 # create stepper function
 stepper <- function(nsteps=interactions,agents=players,DF) {
   
+  # build intial gameset
+  dat <- matrix(c(1:agents,rep(100,agents),
+                  rep(0,agents)),nrow=agents)
+  
   # prepare logbook of transactions
   transactions <- matrix(ncol=nsteps,nrow=agents)
   
@@ -93,26 +97,92 @@ stepper <- function(nsteps=interactions,agents=players,DF) {
 
 }
 
+
+# create stepper function
+stepper2 <- function(nsteps=100,agents=200) {
+  
+  # build intial gameset
+  dat <- matrix(c(1:agents,rep(100,agents),
+                  rep(0,agents)),nrow=agents)
+  
+  # define tanking system
+  rank_01 <- agents/100
+  rank_50 <- agents - (agents/2)+1
+  
+  # prepare logbook of transactions
+  transactions <- matrix(ncol=nsteps,nrow=agents)
+  
+  # prepare diagnostics 
+  diagnostics <- matrix(ncol=4,nrow=nsteps)
+  
+  for (i in seq_len(nsteps)){
+    
+    # pass function results back to DF
+    dat <-energies(dat)
+    
+    # extract transaction and counter
+    trn <-dat[,2] 
+    cnt <-dat[,3] 
+    
+    # sorting of results for diagnostics
+    sorts <- dat[order(dat[,2],decreasing=TRUE),]
+    
+    pos01_unit <- sorts[1,1]
+    
+    pos01_val <- sorts[1,2]
+    pos50_val <-sum(sorts[rank_50:agents,2])
+    
+    diagnostics[i,1] <-pos01_unit
+    diagnostics[i,2] <-pos01_val
+    diagnostics[i,3] <-pos50_val
+    diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
+    
+    
+    # pass per-round balances to logbook
+    transactions[,i]<-trn
+    
+  }
+  
+  # return data
+  #completeRecord <-rbind(transactions,t(diagnostics))
+  #return(completeRecord)
+  
+  # simple case for overall wealth-split trajectories
+  return(diagnostics)
+  
+}
+
 # No 1 Simple Diagnostic Case
 # save to object
-output<-stepper(,,dat)
+output<-stepper2()
+walks2<-replicate(reps,stepper2(nsteps = 1000,agents = 100))
+
+# rinse-repeat formulation
+par(mfrow=c(1,1))
+replicate(reps,stepper2(nsteps = 4000,agents = 100)) %>% 
+  rowMeans(.,dims=2) %>% .[,4] %>% plot(type="l")
+replicate(reps,stepper2(nsteps = 4000,agents = 200)) %>% 
+  rowMeans(.,dims=2) %>% .[,4] %>% lines(type="l",col="green")
+replicate(reps,stepper2(nsteps = 4000,agents = 400)) %>% 
+  rowMeans(.,dims=2) %>% .[,4] %>% lines(type="l",col="blue")
+
+
 
 # USING REPLICATE TO CARRY OUT MANY EXPERIMENTS
 # repeating N times (100 is ~30mB)
-reps <- 400
+reps <- 100
 
 walks<-replicate(reps,stepper(,,dat))
 
 # and plot first outcome
-plot(walks[,4,1],type="l")
-
+,
 # get "average outcome"
-avgOutcomes <-rowMeans(walks,dims=2)
+avgOutcomes <-rowMeans(walks2,dims=2)
 plot(avgOutcomes[,4],type="l")
 
 # extract index and avgs into long vector for CI plot
 a<-rep(1:interactions,reps)
-b<-c(walks[,4,])
+b<-c(walks[,,])
 join<-as.data.frame(cbind(a,b))
 
 ggplot(aes(a,b),data=join) + geom_smooth()
