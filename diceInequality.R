@@ -2,15 +2,6 @@ library(tidyverse)
 
 # Kinetic Energy Model
 
-# define global parameters
-# these are passed as the default for the stepper function
-players <- 10
-interactions<-1000
-
-# build intial gameset
-dat <- matrix(c(1:players,rep(100,players),
-                rep(0,players)),nrow=players)
-
 # create energy-simulation function
 energies <- function(x){
   
@@ -41,69 +32,16 @@ energies <- function(x){
 
 }
 
-
-# prepare diagnostic metrics (only valid for players >=100)
-rank_01 <- players/100
-rank_50 <- players - (players/2)+1
-
-
 # create stepper function
-stepper <- function(nsteps=interactions,agents=players,DF) {
+stepper2 <- function(nsteps=10000,agents=200,rate=0.1,wF=0.025) {
   
   # build intial gameset
   dat <- matrix(c(1:agents,rep(100,agents),
                   rep(0,agents)),nrow=agents)
   
-  # prepare logbook of transactions
-  transactions <- matrix(ncol=nsteps,nrow=agents)
-  
-  # prepare diagnostics 
-  diagnostics <- matrix(ncol=4,nrow=interactions)
-
-  for (i in seq_len(nsteps)){
-    
-    # pass function results back to DF
-    DF <-energies(DF)
-    
-    # extract transaction and counter
-    trn <-DF[,2] 
-    cnt <-DF[,3] 
-    
-    # sorting of results for diagnostics
-    sorts <- DF[order(DF[,2],decreasing=TRUE),]
-    
-    pos01_unit <- sorts[1,1]
-    
-    pos01_val <- sorts[1,2]
-    pos50_val <-sum(sorts[rank_50:players,2])
-    
-    diagnostics[i,1] <-pos01_unit
-    diagnostics[i,2] <-pos01_val
-    diagnostics[i,3] <-pos50_val
-    diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
-    
-    
-    # pass per-round balances to logbook
-    transactions[,i]<-trn
-
-  }
-  
-    # return data
-    #completeRecord <-rbind(transactions,t(diagnostics))
-    #return(completeRecord)
-    
-    # simple case for overall wealth-split trajectories
-    return(diagnostics)
-
-}
-
-
-# create stepper function
-stepper2 <- function(nsteps=100,agents=200) {
-  
-  # build intial gameset
-  dat <- matrix(c(1:agents,rep(100,agents),
-                  rep(0,agents)),nrow=agents)
+  # define redistribution rates/intervals
+  rDis <- round(nsteps*rate,-1)
+  rInt <- seq(rDis,nsteps,rDis)
   
   # define tanking system
   rank_01 <- agents/100
@@ -117,29 +55,66 @@ stepper2 <- function(nsteps=100,agents=200) {
   
   for (i in seq_len(nsteps)){
     
-    # pass function results back to DF
-    dat <-energies(dat)
+    if (i %in% rInt) {
+      
+      dat <- energies(dat)
+      
+      # Redistribution  Scheme
+      totTaxes <-sum(dat[,2]*wF)
+      indSplits <- totTaxes/agents
+      print(paste0(totTaxes,": All"))
+      print(paste0(indSplits,": Split"))
+      dat[,2] <- dat[,2]+indSplits
+      
+      # extract transaction and counter
+      trn <-dat[,2] 
+      cnt <-dat[,3] 
+      
+      # sorting of results for diagnostics
+      sorts <- dat[order(dat[,2],decreasing=TRUE),]
+      
+      pos01_unit <- sorts[1,1]
+      
+      pos01_val <- sorts[1,2]
+      pos50_val <-sum(sorts[rank_50:agents,2])
+      
+      diagnostics[i,1] <-pos01_unit
+      diagnostics[i,2] <-pos01_val
+      diagnostics[i,3] <-pos50_val
+      diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
+      
+      
+      # pass per-round balances to logbook
+      transactions[,i]<-trn
+      
+    } else {
     
-    # extract transaction and counter
-    trn <-dat[,2] 
-    cnt <-dat[,3] 
+      # pass function results back to DF
+      dat <-energies(dat)
+      
+      # extract transaction and counter
+      trn <-dat[,2] 
+      cnt <-dat[,3] 
+      
+      # sorting of results for diagnostics
+      sorts <- dat[order(dat[,2],decreasing=TRUE),]
+      
+      pos01_unit <- sorts[1,1]
+      
+      pos01_val <- sorts[1,2]
+      pos50_val <-sum(sorts[rank_50:agents,2])
+      
+      diagnostics[i,1] <-pos01_unit
+      diagnostics[i,2] <-pos01_val
+      diagnostics[i,3] <-pos50_val
+      diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
+      
+      
+      # pass per-round balances to logbook
+      transactions[,i]<-trn
+      
+    }
     
-    # sorting of results for diagnostics
-    sorts <- dat[order(dat[,2],decreasing=TRUE),]
-    
-    pos01_unit <- sorts[1,1]
-    
-    pos01_val <- sorts[1,2]
-    pos50_val <-sum(sorts[rank_50:agents,2])
-    
-    diagnostics[i,1] <-pos01_unit
-    diagnostics[i,2] <-pos01_val
-    diagnostics[i,3] <-pos50_val
-    diagnostics[i,4] <-round((pos01_val/pos50_val)*100,1)
-    
-    
-    # pass per-round balances to logbook
-    transactions[,i]<-trn
     
   }
   
@@ -152,12 +127,24 @@ stepper2 <- function(nsteps=100,agents=200) {
   
 }
 
-# No 1 Simple Diagnostic Case
+# SIMPLE DIAGNOSTIC CASE :: SINGLE RUN
 # save to object
 output<-stepper2()
-walks2<-replicate(reps,stepper2(nsteps = 1000,agents = 100))
+plot(output[,4],type="l")
 
-# rinse-repeat formulation
+
+# PRODUCTION CASE :: CARRY OUT MANY EXPERIMENTS
+# repeating N times (100 is ~30mB)
+
+reps <- 100
+walks<-replicate(reps,stepper2())
+
+# get "average outcome"
+avgOutcomes <-rowMeans(walks2,dims=2)
+plot(avgOutcomes[,4],type="l")
+
+
+# RINSE REPEAT FORMUALTION :: COMPARE SEVERAL CASES
 par(mfrow=c(1,1))
 replicate(reps,stepper2(nsteps = 4000,agents = 100)) %>% 
   rowMeans(.,dims=2) %>% .[,4] %>% plot(type="l")
@@ -168,14 +155,6 @@ replicate(reps,stepper2(nsteps = 4000,agents = 400)) %>%
 
 
 
-# USING REPLICATE TO CARRY OUT MANY EXPERIMENTS
-# repeating N times (100 is ~30mB)
-reps <- 100
-
-walks<-replicate(reps,stepper(,,dat))
-
-# and plot first outcome
-,
 # get "average outcome"
 avgOutcomes <-rowMeans(walks2,dims=2)
 plot(avgOutcomes[,4],type="l")
