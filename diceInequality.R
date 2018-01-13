@@ -33,17 +33,29 @@ energies <- function(x){
 }
 
 # create stepper function
-stepper2 <- function(nsteps=10000,agents=200,rate=0.1,wF=0.025) {
+stepper <- function(nsteps=10000,agents=200,rate=0.1,wF=0.025) {
   
-  # build intial gameset
+  # build intial game
   dat <- matrix(c(1:agents,rep(100,agents),
                   rep(0,agents)),nrow=agents)
   
   # define redistribution rates/intervals
   rDis <- round(nsteps*rate,-1)
-  rInt <- seq(rDis,nsteps,rDis)
   
-  # define tanking system
+  # setup for NULL taxation
+  if (rDis==0){
+    
+    rInt <-seq(1,nsteps,nsteps)
+    wF <- 0
+    
+  } else {
+    
+    rInt <- seq(rDis,nsteps,rDis)
+    
+  }
+  
+
+  # define ranking system
   rank_01 <- agents/100
   rank_50 <- agents - (agents/2)+1
   
@@ -66,6 +78,7 @@ stepper2 <- function(nsteps=10000,agents=200,rate=0.1,wF=0.025) {
       print(paste0(indSplits,": Split"))
       dat[,2] <- dat[,2]+indSplits
       
+    
       # extract transaction and counter
       trn <-dat[,2] 
       cnt <-dat[,3] 
@@ -119,17 +132,17 @@ stepper2 <- function(nsteps=10000,agents=200,rate=0.1,wF=0.025) {
   }
   
   # return data
-  #completeRecord <-rbind(transactions,t(diagnostics))
-  #return(completeRecord)
+  # completeRecord <-rbind(transactions,t(diagnostics))
+  # return(completeRecord)
   
-  # simple case for overall wealth-split trajectories
+  # case for overall wealth-split trajectories
   return(diagnostics)
   
 }
 
 # SIMPLE DIAGNOSTIC CASE :: SINGLE RUN
 # save to object
-output<-stepper2()
+output<-stepper(rate = 0,wF = 0.1)
 plot(output[,4],type="l")
 
 
@@ -137,11 +150,14 @@ plot(output[,4],type="l")
 # repeating N times (100 is ~30mB)
 
 reps <- 100
-walks<-replicate(reps,stepper2())
+walks<-replicate(reps,stepper())
 
 # get "average outcome"
-avgOutcomes <-rowMeans(walks2,dims=2)
-plot(avgOutcomes[,4],type="l")
+avgOutcomes <-rowMeans(walks,dims=2)
+plot(avgOutcomes[,4],type="l",
+     main="Total Wealth of Top 1% Total versus the Bottom 50%",
+     ylab="Wealth Disparity (%)",
+     xlab="Interactions (n)")
 
 
 # RINSE REPEAT FORMUALTION :: COMPARE SEVERAL CASES
