@@ -1,9 +1,0 @@
-Stations_ID;Von_Datum;Bis_Datum;Stationsname;Parameter;Parameterbeschreibung;Einheit;Datenquelle (Strukturversion=SV);Zusatz-Info;Besonderheiten;Literaturhinweis;eor;
-691;18900101;20010331;Bremen;RS;tgl. Niederschlagshoehe Messnetz 6;mm;Niederschlagsdaten aus Niederschlagsroutine des DWD oder Vorgängerdienste bis Einrichtung Nst(A) oder Nst(k) (1 Termin ca 7 MOZ und Tagessummen);NBL:07:00-07:00 FT. GZ (bis 1990)  sonst 07:30 - 07:30 FT. GZ;;;eor;
-691;20010401;20170507;Bremen;RS;tgl. Niederschlagshoehe Messnetz 6;mm;Niederschlagsdaten aus Niederschlagsroutine nach 01.04.2001 Terminwert und Tagessummen generiert aus SYNOP-Meldung des 06 UTC Termins;05:51 - 05:50 FT. UTC;;;eor;
-691;18900101;20010331;Bremen;RSF;Kennung fuer die Art RS (24-stdg.) Messnetz 6;numerical code;Niederschlagsdaten aus Niederschlagsroutine des DWD oder Vorgängerdienste bis Einrichtung Nst(A) oder Nst(k) (1 Termin ca 7 MOZ und Tagessummen);NBL:07:00 GZ (bis 1990)  sonst 07:30 GZ;;;eor;
-691;20010401;20170507;Bremen;RSF;Kennung fuer die Art RS (24-stdg.) Messnetz 6;numerical code;Niederschlagsdaten aus Niederschlagsroutine nach 01.04.2001 Terminwert und Tagessummen generiert aus SYNOP-Meldung des 06 UTC Termins;05:50 UTC;;;eor;
-691;18900101;20010331;Bremen;SH_TAG;Schneehoehe Tageswert;cm;Niederschlagsdaten aus Niederschlagsroutine des DWD oder Vorgängerdienste bis Einrichtung Nst(A) oder Nst(k) (1 Termin ca 7 MOZ und Tagessummen);NBL:07:00 GZ (bis 1990)  sonst 07:30 GZ;;;eor;
-691;20010401;20170507;Bremen;SH_TAG;Schneehoehe Tageswert;cm;Niederschlagsdaten aus Niederschlagsroutine nach 01.04.2001 Terminwert und Tagessummen generiert aus SYNOP-Meldung des 06 UTC Termins;05:50 UTC;;;eor;
-Legende: FT  = Folgetag; GZ = Gesetzliche Zeit
-generiert: 08.05.2017 --  Deutscher Wetterdienst  --

@@ -1,5 +1,0 @@
->bulloides_37f_2,gacagtttcaggagtggttcttggtaaacaattgagagagttgaagtt,input.seq.txt,input.seq.txt
->culloides_37f_3,gacagttggcaggagtggttcttggtaaaaacaaatgagagagttgaagtt,input.seq.txt,input.seq.txt
->dulloides_37f_4,gacagttagacagaagtggtttaggtaacaattgagagagttgaagtt,input.seq.txt,input.seq.txt
->eulloides_37f_5,gacggtcttattggtggactctaagacgtcatggtaaagttgaagtt,input.seq.txt,input.seq.txt
->fulloides_37f_6,gacagttagacagaagtgaggttttggtaacaattgagagagttgaagtt,input.seq.txt,input.seq.txt
