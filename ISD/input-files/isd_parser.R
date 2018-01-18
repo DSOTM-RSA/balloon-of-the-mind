@@ -4,10 +4,10 @@ library(magrittr)
 library(stringr)
 
 # read in selected station IDS
-sts.raw <- read.csv("statsde.txt",header = FALSE) 
+sts.raw <- read.csv("statscpt.txt",header = FALSE) 
 sts <- as.vector(sts.raw$V1) %>% as.character() # extract station IDS
 
-yrs<-rep(2006:2015,each=length(sts)) # make a rep vector of dates
+yrs<-rep(2000:2015,each=length(sts)) # make a rep vector of dates
 suf <- ".gz" # make suffix
 
 tmp<-str_c(sts,yrs,sep = "-99999-")

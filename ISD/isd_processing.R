@@ -1,24 +1,87 @@
 # Step 1: Import and Arrange with Lookup Tables ----
 
 # loading libraries
-library(lubridate) # simple conversion of dates
-library(tidyverse) # loading the tidyverse
+library(lubridate) 
+library(tidyverse) 
+library(stringr)
+library(extrafont)
 
-where<-getwd()	# get home-dir
+source("customTheme.R")
+
+# load saved DF of parsed data
+setwd("~/Documents/dataR")
+stationData_Raw <- read_delim("station_tables.tsv","\t", escape_double = FALSE, trim_ws = TRUE)  
+
+# setting up dates
+stationData_Raw$year <- str_sub(stationData_Raw$date,1,4)
+stationData_Raw$month <- str_sub(stationData_Raw$date,5,6)
+stationData_Raw$day <- str_sub(stationData_Raw$date,7,8)
+
+stationData_Raw$hour <- str_sub(stationData_Raw$time,1,2)
+stationData_Raw$minute <- str_sub(stationData_Raw$time,3,4)
+stationData_Raw$second <- rep("00",nrow(stationData_Raw))
+
+# construct datetime with lubridate
+stationData_Raw$datetime<-ymd_hms(paste(stationData_Raw$year, 
+                                 stationData_Raw$month,
+                                 stationData_Raw$day, 
+                                 stationData_Raw$hour, 
+                                 stationData_Raw$minute, 
+                                 stationData_Raw$second, sep="-"))
+
+# selecting initial variables of interest
+stationData_Trimmed <- stationData_Raw %>% select(.,usaf_station,elevation,wind_direction,
+                                wind_speed,visibility_distance,datetime)
 
 
-raw.data <- read_delim("statTabsAgg.tsv","\t", escape_double = FALSE, trim_ws = TRUE)  
-raw.data$yrs <-year(raw.data$date) 
+# join to station meta-data file
+statscpt <- read_csv("statscpt.txt",
+                     col_names = FALSE)
+
+stationData_Joined<-dplyr::left_join(stationData_Trimmed,statscpt,
+                                by=c("usaf_station"="X1"))
+
+# choose final variables
+Wind <- stationData_Joined %>% rename(location = X3,
+                            lat = X4, lon = X5) %>% select(.,-X2,-X6,-X7)
+
+# fix column types
+Wind$wind_speed <-as.numeric(Wind$wind_speed)
+Wind$wind_direction <-as.numeric(Wind$wind_direction)
+Wind$usaf_station <-as.factor(Wind$usaf_station)
+
+# deal with NA's
+Wind$wind_direction[Wind$wind_direction == 999] <- NA
+Wind$wind_speed[Wind$wind_speed >= 999] <- NA
+
+summary(Wind)
+
+# remove prep files
+rm(stationData_Raw,stationData_Trimmed,stationData_Joined,statscpt)
+
+# write data to file
+write.table(Wind,file="Wind.tsv",sep="\t",col.names=T,row.names = FALSE)
+
+# quick plot of data
+ggplot(Wind,aes(usaf_station, wind_speed, fill=location)) +
+  geom_violin(scale="width",trim=FALSE,draw_quantiles = c(0.50)) + 
+  xlab("USAF Station ID") + 
+  ylab("Wind Speed (km/s)") + 
+  labs(title="Wind Profiles in the Cape Town Region (2000 - 2015)",
+                                   subtitle="50% Quantile marked by Horizontal Lines",
+       fill="Station Name") +
+  theme_plain(base_size = 12)
+
 
 # making wind roses
 pieces <- c(0,30,60,90,120,150,180,210,240,270,300,330)
-raw.data$sgs <- findInterval(raw.data$wind_direction,pieces)
+stationData_Raw$sgs <- findInterval(stationData_Raw$wind_direction,pieces)
 
 # deal with NA's
-raw.data$wind_direction[raw.data$wind_direction == 999] <- NA
-raw.data$wind_speed[raw.data$wind_speed >= 999] <- NA
+stationData_Raw$wind_direction[stationData_Raw$wind_direction == 999] <- NA
+stationData_Raw$wind_speed[stationData_Raw$wind_speed >= 999] <- NA
 
-summary(raw.data)
+summary(stationData_Raw)
 
 # make mini lookup table
 lookUp.slices <- data.frame(
