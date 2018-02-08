@@ -1,0 +1,2 @@
+newImages/part01.png
+newImages/c/part01.png

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # compute image hashes for directories
-python hash_and_search.py --haystack oldImages/ --needles newImages/
+python hash_func.py --haystack oldImages/ --needles newImages/
 
 # compare hashes between two locales
 gawk -F, '
