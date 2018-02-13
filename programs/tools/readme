@@ -1,0 +1,15 @@
+unique file names :: in single dir :: resize to 10% :: hash-commpute (:: merge dir-hash lists :: indentify duplicates :: write to file 
+:: substitute fullsize dirs :: remove files)
+
+# randomNamer
+
+# NB need this random string before hand ---> put this in a shell script with parameters and variable names
+random_string() { 
+  echo "$(date +%s%N)$RANDOM" | md5sum | awk '{print $1}' 
+}
+
+find /path/to/files -type f | while read FILE; do 
+  EXTENSION=${FILE##*.}
+  mv "$FILE" "$(dirname "$FILE")/$(random_string).$EXTENSION"
+done
+
