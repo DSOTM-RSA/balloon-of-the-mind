@@ -14,14 +14,31 @@ foodTracker_Winter_18 %>%
   summarise(Cost = sum(Price)) %>% 
   arrange(desc(Cost)) 
 
+# read in data
+data_Food <- read_delim("foodTracker - Winter_18_2.tsv", "\t", 
+                                    escape_double = FALSE, 
+                                    col_types = cols(Date = col_date(format = "%d/%m/%Y")), 
+                                    trim_ws = TRUE)
 
-foodTracker_Winter_18 %>% 
-  thicken(interval = 'week') %>% group_by(Category) %>% 
-  summarise(Cost = sum(Price)) %>% 
-  mutate(Prop_Spend=Cost/sum(Cost)*100)%>%
-  ggplot(.,aes(Category,Prop_Spend)) + geom_bar(stat="identity") 
+# weekly quants
+week_tot <- data_Food %>% thicken(interval = 'week') %>% 
+  group_by(Date_week) %>% summarise(items_tot=n(),costs_tot=sum(Price))
 
+# building model
+model_data<-data_Food %>% thicken(interval = 'week') %>% 
+  mutate(Category=factor(Category)) %>% 
+  group_by(Date_week,Category) %>% 
+  mutate(un = n()) %>% 
+  summarise(cost_Cat=sum(Price),no=n()) %>% 
+  mutate(cost_p=round(cost_Cat/sum(cost_Cat)*100,0)) %>% 
+  select(-cost_Cat) %>% 
+  left_join(week_tot) %>% 
+  ungroup() %>% 
+  mutate(Date_week=factor(Date_week))
 
+str(model_data)
+
+# inital 
 products_summary <-foodTracker_Winter_18 %>% 
   thicken(interval = 'week') %>% group_by(Category) %>% 
   filter(Category=="OG") %>% group_by(Item) %>% 
