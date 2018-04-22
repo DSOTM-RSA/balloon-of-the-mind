@@ -6,89 +6,90 @@ library(kableExtra)
 
 setwd("~/Documents/GitArchive/notebook")
 source("data/ROAM.r")
- 
-foodTracker_Winter_18 <- read_delim("foodTracker - Winter_18.tsv", "\t", 
-                                     escape_double = FALSE, 
-                                     col_types = cols(Date = col_date(format = "%d/%m/%Y")), 
-                                     trim_ws = TRUE)
+
+setwd("~/Documents/GitArchive/porkBelly/experiments/food_tracker")
 
 basics <- read_delim("basics.tsv", "\t",
                      escape_double = FALSE, 
                      col_types = cols(Date = col_date(format = "%d/%m/%Y")), 
                      trim_ws = TRUE)
 
-str(foodTracker_Winter_18)
 
 # overview of data 
 kable(head(basics),"html") %>% kable_styling(font_size=12)
 
 # weekly quantities
-basics %>% 
+weekly_summary <-basics %>% 
   thicken(interval = 'week') %>% 
   group_by(Date_week) %>% 
   summarise(items_tot=n(),costs_tot=sum(Price)) %>% 
-  arrange(desc(Date_week)) %>% 
+  arrange(desc(Date_week))
+
+# plot :: weekly costs TS
+weekly_summary %>% 
   ggplot(., aes(Date_week,costs_tot)) + 
   geom_point() + geom_smooth(method = "lm") +
-  theme_plain(base_size = 9)
+  theme_plain(base_size = 11) +
+  xlab("Date") +
+  ylab("Weekly Expenditure (Estimated)")
 
-# weekly visits
-basics %>% 
-  thicken(interval = 'week') %>% 
-  group_by(Date_week) %>% 
-  summarise(items_tot=n(),costs_tot=sum(Price)) %>% 
-  arrange(desc(Date_week)) %>% 
+# plot: items vs total cost
+weekly_summary %>% 
   ggplot(., aes(items_tot,costs_tot)) + 
   geom_point() + geom_smooth(method = "lm") +
-  theme_plain(base_size = 9)
+  theme_plain(base_size = 11) +
+  xlab("Items Purchased (per Week)") +
+  ylab("Total Cost (€)")
 
-# split per category
-basics %>% 
-  thicken(interval = 'week') %>% group_by(Category) %>% 
-  summarise(Cost = sum(Price)) %>% 
-  arrange(desc(Cost)) %>% 
-  ggplot(., aes(Category,Cost)) + geom_col() +
-  theme_plain(base_size = 9)
+# aggregate split per category
+aggregate_costs<-basics %>% thicken(interval = 'week') %>% 
+  mutate(Category=factor(Category)) %>% 
+  group_by(Category) %>% 
+  summarise(cost_total=sum(Price)) %>% 
+  mutate(cost_total_prop=round(cost_total/sum(cost_total)*100,0)) %>% 
+  arrange(desc(cost_total_prop))
 
-# smoothed distribution of costs
-basics %>% 
-  ggplot(.,aes(Price, ..count.. , 
-               colour=Category, fill = Category)) + 
-  geom_density(position="fill",alpha=0.75,adjust=4) +
-  theme_plain(base_size = 9) + ylab("Proportion of Occurences")
-
-
-
-# idea: proportions of product per week (TS)
-
+# plot :: aggregate proportional costs per category
+aggregate_costs %>% ggplot(., aes(cost_total_prop,
+                      fct_reorder(Category,cost_total_prop))) +
+  geom_point(size=4,shape=3) + 
+  coord_flip() + 
+  theme_plain(base_size = 11) +
+  xlab("Proportional Spend") +
+  ylab("Food Category")
+  
 # building model
 model_data<-basics %>% thicken(interval = 'week') %>% 
   mutate(Category=factor(Category)) %>% 
   group_by(Date_week,Category) %>% 
   mutate(un = n()) %>% 
-  summarise(cost_Cat=sum(Price),no=n()) %>% 
-  mutate(cost_p=round(cost_Cat/sum(cost_Cat)*100,0)) %>% 
-  select(-cost_Cat) %>% 
+  summarise(cost_category=sum(Price),no_items=n()) %>% 
+  mutate(cost_prop=round(cost_category/sum(cost_category)*100,0),
+         no_items_prop=round(no_items/sum(no_items)*100,0))
+
+# plot :: cost vs yield by category
+model_data %>% 
+  ggplot(., aes(cost_prop,no_items_prop,colour=Category, size=no_items)) + 
+  geom_point() + 
+  theme_plain(base_size = 11) + 
+  coord_trans(y="log",x="log") +
+  scale_y_continuous(expand=c(0.1,0.1),
+                     breaks=c(5,10,20,45)) +
+  scale_x_continuous(expand=c(0.1,0.1),
+                     breaks=c(5,10,20,45)) +
+  xlab("Proportional Cost") +
+  ylab("Proportional Amount") +
+  labs(title="Relationship between Relative Spend and Yield over 7 Weeks (N = 52)",
+       size="Items (n)") + 
+  guides(color=guide_legend(title="Food Category")) 
+  
+
+#%>% 
   left_join(weekly) %>% 
   ungroup() %>% 
   mutate(Date_week=factor(Date_week))
 
-str(model_data)
-
-# inital 
-products_summary <-foodTracker_Winter_18 %>% 
-  thicken(interval = 'week') %>% group_by(Category) %>% 
-  filter(Category=="OG") %>% group_by(Item) %>% 
-  mutate(PpK=(Price/Weight)) %>% 
-  summarise(Quantity_kg=sum(Weight),
-            PV_per_kg = mean(PpK,na.rm=TRUE),
-            Price_Volatility = sd(PpK,na.rm=TRUE)) %>% 
-  arrange(desc(Quantity_kg))
-
-
-# payoff expensive products (or volatile) medium amounts ??
-ggplot(products_summary,aes(PV_per_kg,Quantity_kg)) + 
-  geom_point(aes(colour=factor(Item))) 
+str(model_data
 
 
 
