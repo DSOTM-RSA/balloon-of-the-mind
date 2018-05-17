@@ -78,7 +78,9 @@ ggplot(data=locations_mapped,aes(Lon,Lat)) +
   geom_point(size=log(locations_mapped$welpen_sum)) +
   xlab("Longitude (E)") + ylab("Latitude (N)") + 
   labs(title="Distribution of Wolf Prospensity in Eastern Germany",
-       subtitle="With Voronoi Tesselations Marking Locales") +   theme_plain(base_size = 9)
+       subtitle="With Voronoi Tesselations Marking Locales (AZ Equal Area Projection)") +  
+  theme_plain(base_size = 9) + 
+  coord_map("azequalarea",orientation = c(51.6,13,5))
 
 ggsave("voronoi_wolves-density.png",width=10,height=6)
 
