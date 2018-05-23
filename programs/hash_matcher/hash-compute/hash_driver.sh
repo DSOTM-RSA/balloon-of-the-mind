@@ -29,6 +29,7 @@ echo -e "[INFO]: printing first 10 duplicates..."
 head -10 DIR-PRC-FN.txt
 
 # delete duplicate folders :: BE CAREFUL with typos....
-# xargs rm < dirs.txt
+# works 23/05/18
+#xargs rm < DIR-PRC-FN.txt
 
 
