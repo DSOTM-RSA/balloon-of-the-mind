@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run with ./hash_driver 
+# for console output add "&> term_ouput.txt"
+
 # compute image hashes for directories
 python hash_func.py --haystack oldImages/ --needles newImages/
 
