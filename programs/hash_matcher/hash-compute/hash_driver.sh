@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run with ./hash_driver 
-# for console output add "&> term_ouput.txt"
+# for console output add "&> term_output.txt"
 
 # compute image hashes for directories
 python hash_func.py --haystack oldImages/ --needles newImages/
@@ -30,6 +30,14 @@ sed 's/,/\n/g' DIR-PRC_02.txt > DIR-PRC-FN.txt # seperate onto newlines
 echo -e "[INFO]: finished labelling duplicates"
 echo -e "[INFO]: printing first 10 duplicates..."
 head -10 DIR-PRC-FN.txt
+
+# make backups
+
+cp hay.{txt,backup."$(date +%Y%m%d-%H%M%S)"}
+cp needle.{txt,backup."$(date +%Y%m%d-%H%M%S)"}
+
+cp HSH-MTCH.{txt,backup."$(date +%Y%m%d-%H%M%S)"}
+cp DIR-PRC-FN.{txt,backup."$(date +%Y%m%d-%H%M%S)"}
 
 # delete duplicate folders :: BE CAREFUL with typos....
 # works 23/05/18
