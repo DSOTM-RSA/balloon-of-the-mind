@@ -9,7 +9,7 @@ source("ROAM.r")
 
 # read data
 setwd("~/Documents/GitArchive/porkBelly/wolves")
-wolf_data <- read_delim("wolf_data.tsv",
+wolf_data <- read_delim("wolf_data_2012.tsv",
                         "\t", escape_double = FALSE, trim_ws = TRUE)
 
 
@@ -29,7 +29,7 @@ labs_status <-data.frame(Status=c("e","p","r","np"),
 locations <- complete.ts %>% 
   group_by(Territorium) %>% 
   summarise(welpen_sum = sum(Welpen)) %>%
-  arrange(desc(welpen_sum)) %>% filter(.,welpen_sum>0)
+  arrange(desc(Territorium)) %>% filter(.,welpen_sum>0)
 
 
 # quick plot
@@ -41,7 +41,7 @@ locations %>%
 
 
 # load coordinates
-coords_wolves <- read_delim("coords_wolves.tsv","\t", 
+coords_wolves <- read_delim("coords_wolves_2012.tsv","\t", 
                             escape_double = FALSE, trim_ws = TRUE)
 # and join
 locations_mapped <-left_join(locations,coords_wolves)
@@ -72,15 +72,16 @@ voronoi_gg <- deldir(locations_mapped$Lon,locations_mapped$Lat)
 ggplot(data=locations_mapped,aes(Lon,Lat)) +
   geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2),
                size=0.5,color="grey",data=voronoi_gg$dirsgs) + 
-  stat_density_2d(aes(fill = ..level..), 
-                  geom = "polygon", alpha = 0.25, color = NA) +
-  scale_fill_gradient2("Density", low = "white", mid = "yellow", high = "red", midpoint = 1) +
+  stat_density_2d(aes(fill = ..level.., alpha = ..level..),bins=25, 
+                  geom = "polygon",, color = NA) +
+  scale_fill_gradient2("Density", low = "white", mid = "yellow", high = "red",midpoint = 0.25) +
+  scale_alpha(range = c(0, 0.3), guide = FALSE) +
   geom_point(size=log(locations_mapped$welpen_sum)) +
   xlab("Longitude (E)") + ylab("Latitude (N)") + 
   labs(title="Distribution of Wolf Prospensity in Eastern Germany",
        subtitle="With Voronoi Tesselations Marking Locales (AZ Equal Area Projection)") +  
   theme_plain(base_size = 9) + 
-  coord_map("azequalarea",orientation = c(51.6,13,5))
+  coord_map("azequalarea",orientation = c(51,13,5))
 
 ggsave("voronoi_wolves-density.png",width=10,height=6)
 
@@ -103,3 +104,34 @@ ggplot(stats,aes(Jahr,n)) + geom_point() +
                      breaks=c(2000,2003,2006,2009,2012))
 
 ggsave("ts_wolves-groups.png",width=10,height=6)
+
+library(raster)
+wc <- getData('worldclim', res=5,var="tmin")
+plot(wc)
+
+bfc <- extract(wc, coords_wolves[,2:3])
+head(bfc)
+
+e <- extent(SpatialPoints(coords_wolves[, 2:3]))
+
+# 5000 random samples (excluding NA cells) from extent e
+set.seed(0)
+bg <- sampleRandom(wc, 5000, ext=e)
+dim(bg)
+## [1] 5000   19
+head(bg)
+
+d <- rbind(cbind(pa=1, bfc), cbind(pa=0, bg))
+d <- data.frame(d)
+dim(d)
+
+
+library(rpart)
+cart <- rpart(pa~., data=d)
+printcp(cart)
+plotcp(cart)
+
+#
+
+plot(cart, uniform=TRUE, main="Regression Tree")
+text(cart, cex=.8)
