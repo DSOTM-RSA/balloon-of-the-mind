@@ -7,12 +7,15 @@ shares <- function(x,sp){
   fracA<-length(x)*sp
   fracB <-length(x)-fracA
   
-  sideA <- sample(x,fracA,replace=TRUE)
-  sideB <- sample(x,fracB,replace=TRUE)
+  sideA <- sample(x,fracA,replace=FALSE)
+  sideB <- x[-which(sideA %in% x)]
+  #sideB <- sample(x,fracB,replace=TRUE)
   
   leftB<-sideB[-which(sideB %in% sideA)]
   
   leftAB <- c(sideA,leftB)
+  
+  return(leftAB)
   
 }
 
@@ -22,20 +25,21 @@ shares <- function(x,sp){
 # holds loop function
 # writes diagnostics
 
-stepper <- function(nsteps=25,pool=52,dups=0.10,splits=0.75){
+stepper <- function(nsteps=25,pool=52,dups=0.5,splits=0.75){
   
-  sams <- c(seq(1,pool,1),c(sample(seq(1,pool,1),dups*pool),
-                            seq((pool+dups*pool),2*pool,1)))
+  sams <- c(seq(1,pool,1),c(sample(seq(1,pool,1),dups*pool)),c(
+                            seq(pool+floor(dups*pool),2*pool-1,1)))
   
   # prepare
   transactions <- matrix(ncol=2,nrow=nsteps)
   
   for (i in seq_len(nsteps)){
     
-    sams <- shares(sams,sp=splits)
-    res<-as.numeric(length(unique(sams))/length(sams))
+    sams <-shares(sams,sp=splits)
+    res <-round(as.numeric(length(unique(sams))/length(sams)),2)
     trn <-res
     transactions[i,2]<-trn
+    
     #transactions[i]<-floor(dups*length(sams))
     transactions[i]<-i # update :: keep track of step in loop, used for plotting
 
