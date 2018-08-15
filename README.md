@@ -2,7 +2,7 @@
 
 Programming, analysis, visualisation and design projects workshop
 
-- code-snipepts
-- utility programs
+- programmed examples
+- utility programs (Linux)
 - learning material
 - CAD design
