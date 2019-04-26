@@ -1,0 +1,110 @@
+MONGODB
+
+- data is sent from multiple HTTP endpoints, typically in JSON format
+- the databases which emphasis performance will not perfrom validation, or consistency checks
+- read/write operations are ompitimzed for this real-time data
+- the schema is validated at the application level rather than the database level
+
+THE APPLICATION DETERMINES THE STRUCTURE OF THE DATA (SCHEMA, NOT THE DATABASE
+
+- MongoDB is document-based NoSQL database
+- can interact it using APIs and JSON-like data
+- it supports ad-hoc queries, UDFs (Javascript, and indexing
+- it can be scaled horizontally across many nodes using sharding and a SHARD KEY
+
+It uniqually supports:
+
+- capped collections (setting size limits for collections for predictable performace)
+- aggregation usign MapReduce paradigm
+- file storage implemented as a Grid File System, allows files to be manipulated as documents
+
+	Data Model:
+
+DOCUMENTS in MongodDB are grouped in COLLECTIONS; each collection contains a group of documents and is the equivalent of a table from a relational database. Queries are performed at the query level.
+
+Collections are grouped into DATABASES, which are physical containers on the local file system.
+
+Document operations can be performed using JSON, but are stored in BSON, a binary superset of JSON. BSON offers additional data types, and efficiencies. 
+
+	Using Mongo Shell:
+
+show dbs
+use local
+show collections
+
+db.[collection name].[name of operation]([parameters])
+db.students.find()
+
+db.students.find(
+	{ "age": 10 }
+
+db.students.find({
+	"age": {
+	    $gt: 10
+	}
+})
+
+db.students.find({
+	"age": 10,
+	"hasBraces": true
+})
+
+db.students.find({
+	$or: [
+   	    { "age": { $lt: 15}},
+	    { "age": { $gt: 12}}
+	]
+})
+
+db.teachers.remove({ })
+
+db.teachers.remove(
+	{ "speciality": "reading" }
+)
+
+db.ecommerce.insert({ "group": "Digital", "product": Wish You Were Here"})
+db.ecommerce.insert({ "group": "Merchandise", "product": "Poster", "dimensions": {"width": 24, "height": 36}})
+
+
+	Aggregation Operations
+
+db.name-of-db.count()
+db.name-of-db.distinct("username")
+
+
+db.testscore.aggregate([
+	{
+		$match: {
+		   type: "reading"
+		}
+	},
+	{
+		$group: {
+		    _id: "$grade",
+		    averagescore: {
+			$avg: "$score"
+		    }
+		}
+	}
+]}
+
+	Text Index Searching
+
+db.name-of-db.createIndex({ company: "text"})
+db.name-of-db.find({ $text: { $search: "Bike" }})
+db.name-of-db.find({ $text: { $search: "Bike Bicycle -Discount" }})
+db.name-of-db.find({ $text: { $search: "\"Bike Company\"" }})
+
+Indexes
+
+Using indexes allows one to prioritize certain propoerties and data types within a database.
+
+- _id Index is unique for each document in your database
+- custom Indexes: compound indexes, text indexes, multi-key indexs, geospatial indexes and hashed indexes
+
+db.products.createIndex({ price: -1 }) ----> descending index on the price field
+
+d.products.getIndexs()
+
+dp.parts.CreateIndex({ brand: 1, colour: 1 })
+
