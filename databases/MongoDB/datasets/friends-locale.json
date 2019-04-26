@@ -1,0 +1,7 @@
+{"_id": 1, "name" : "Sam", "friends" : ["Bob", "Jess", "Frank"], "nearestAirport" : "TXS"}
+{"_id": 2, "name" : "Bob", "friends" : ["Jess", "David"], "nearestAirport" : "LGA"}
+{"_id": 3, "name" : "Frank", "friends" : ["Sam", "Jess", "David"], "nearestAirport" : "LON"}
+{"_id": 4, "name" : "David", "friends" : ["Bob", "Frank"], "nearestAirport" : "TXL"}
+{"_id": 5, "name" : "Jess", "friends" : ["Sam", "Bob", "Frank", "Ralph"], "nearestAirport" : "AMS"} 
+{"_id": 6, "name" : "Ralph", "friends" : ["Jess"], "nearestAirport" : "SEA"}
+ 

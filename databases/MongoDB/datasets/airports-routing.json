@@ -1,0 +1,18 @@
+{"_id" : "a1", "origin" :  "BOS", "dest" : ["JFK", "LGA", "TXS"], "loc" : "Nam" }
+{"_id" : "a2", "origin" :  "LGA", "dest" : ["BOS", "TXS", "LXA", "LON"], "loc": "Nam"}
+{"_id" : "a3", "origin" :  "TXS", "dest" : ["JFK", "LON", "LXA", "SEA"], "loc" : "Nam" }
+{"_id" : "a4", "origin" :  "LXA", "dest" : ["JFK", "LGA", "TXS","SEA","LON"], "loc" : "Nam"}
+{"_id" : "a5", "origin" :  "SEA", "dest" : ["TXS", "LGA"], "loc" : "Nam"}
+{"_id" : "a6", "origin" :  "LON", "dest" : ["TXS", "LGA","JFK","PAR","HAW"], "loc" : "Eur"}
+{"_id" : "a7", "origin" :  "PAR", "dest" : ["JFK", "LON","TXL"], "loc" : "Eur"}
+{"_id" : "a8", "origin" :  "TXL", "dest" : ["JFK", "LON","PAR","DUB","CPT"], "loc" : "Eur"}
+{"_id" : "a9", "origin" :  "AMS", "dest" : ["JFK", "LON","PAR","CPT","MOS"], "loc" : "Eur"}
+{"_id" : "a10", "origin" :  "MOS", "dest" : ["LON","PAR","TXL","HKG","BJG"], "loc" : "Asi"}
+{"_id" : "a11", "origin" :  "HKG", "dest" : ["LON","PAR","AUK","HAW"], "loc" : "Asi"}
+{"_id" : "a12", "origin" :  "BJG", "dest" : ["PAR","LAX","MOS","TXL","MUM"], "loc" : "Asi"}
+{"_id" : "a13", "origin" :  "MUM", "dest" : ["LON","TXL","MOS","HKG"], "loc" : "Asi"}
+{"_id" : "a14", "origin" :  "AUK", "dest" : ["HAW","HKG","SYD"], "loc" : "Pac"}
+{"_id" : "a15", "origin" :  "SYD", "dest" : ["CPT","HKG","MUM"], "loc" : "Pac"}
+{"_id" : "a16", "origin" :  "HAW", "dest" : ["LAX","SEA"], "loc": "Pac"}
+{"_id" : "a17", "origin" :  "DUB", "dest" : ["JFK","BJG","MOS"], "loc" : "Mea"}
+{"_id" : "a17", "origin" :  "CPT", "dest" : ["LON","DUB","PAR"],"loc" : "Afr"}

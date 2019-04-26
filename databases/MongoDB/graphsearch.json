@@ -1,0 +1,11 @@
+
+# return all routes from all airports
+db.routes.aggregate([ { $graphLookup: {from :"routes", startWith: "$origin", connectToField: "origin", connectFromField : "dest",as : "destinations", depthField: "noHopsToDest"} }]).pretty()
+
+# return routes from a given airport
+db.routes.aggregate([ { $match: { origin: "SEA" } }, 
+{ $graphLookup: {from :"routes", startWith: "$origin", connectToField: "origin", connectFromField : "dest", as : "destinations", depthField: "noHopsToAirport"}}]).pretty()
+
+# return all routes with 4 changes
+db.routes.aggregate([ { $graphLookup: {from: "routes", startWith: "$origin", connectToField: "origin", connectFromField : "dest", depthField: "hops", as : "quick_trips"} }
+, {$addFields: {quick_trips: {$filter: {input: "$quick_trips", cond: {$eq: ["$$this.hops",4]}}}}}]).pretty()
