@@ -1,8 +1,11 @@
-# porkBelly
+# The Balloon of The Mind
 
-Programming, analysis, visualisation and design projects workshop
+*Hands do what you're bid:*
 
-- programmed examples
-- utility programs (Linux)
-- learning material
-- CAD design
+*Bring the balloon of the mind*
+
+*That bellies and drags in the wind*
+
+*Into its narrow shed.*
+
+  **W.B. Yeats**
