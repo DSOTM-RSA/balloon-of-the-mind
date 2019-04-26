@@ -1,0 +1,20 @@
+\l						list all the available databases
+
+\dt 					list all available tables in current database
+
+\c database_name		switch to the database database_name
+
+\d table_name 			describe a given table table_name
+
+select version();		show version/build of postgre
+
+\g 						retrieve previous command
+
+\?						list all available commands avaiable in psql
+
+h\ PSQL COMMAND			show help for given psql command
+
+\timing 				enable timinf for following commands
+
+\e						edit previous query in notepad and execute on close
+

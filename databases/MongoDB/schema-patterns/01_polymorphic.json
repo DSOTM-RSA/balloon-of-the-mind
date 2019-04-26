@@ -1,0 +1,37 @@
+Polymorphic Pattern
+
+- good for data which shares many common fields across different documents
+- not all fields are present/idenitcal for different documents
+- querying can be accomodated through acess to entire collection, i.e. brands, sizes, stock etc.
+ 
+
+{"category": "Outdoors",
+"product_group": "Fishing",
+"brand": "Singer",
+"article": "Bass-King BL",
+"units": [ {
+	"type": "Jnr"
+	"length": 80}, 
+{
+	"type": "Pro"
+	"length": 140
+	} ]
+}
+
+{"category": "Garden",
+"product_group": "Pool",
+"brand": "Blue Diamond",
+"article": 	"Family Bay Pool",
+"dimensions": [ {
+	"type": "assembled",
+	"length": 185,
+	"width": 220,
+	"depth": 40,
+	} ,
+{
+	"type": "packaging",
+	"length": 65,
+	"width": 90,
+	"dpeth": 50
+	]
+}

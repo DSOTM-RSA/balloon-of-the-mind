@@ -1,0 +1,38 @@
+Bucket Pattern
+
+- time-series data, stremaing or IOT devices
+- our first initution may to be insert every meaurment into its own document
+
+ {
+ sensor_ID: "device123",
+ timestamp: ISODate("2019-01-31T10:001:00.000Z"),
+  temperature: 56
+ }
+ 
+  {
+ sensor_ID: "device123",
+ timestamp: ISODate("2019-01-31T10:02:00.000Z"),
+  temperature: 34
+ }
+ 
+ To enable rapid access to our data we would need to index every sensor_ID and timestamp for each single measurment (at the cost of RAM).
+ 
+ By "bucketing" our information we get improvements in index sizes, query simplicity and pre-aggregation.
+ 
+ {
+ sensor_ID: "device123",
+ start_date: ISODate("2019-01-31T10:00:00.000Z"),
+  start_end: ISODate("2019-01-31T10:59:59.000Z"),
+  measurements: [
+  {
+  timestamp: ISODate("2019-01-31T10:01:00.000Z"),
+  temperature: 56,
+  }
+  {
+  timestamp: ISODate("2019-01-31T10:02:00.000Z"),
+  temperature: 34,
+  }
+  ],
+  transaction_count: 42,
+  sum_temperature: 2356
+ }

@@ -1,0 +1,55 @@
+## Expressions representing useful queries
+
+---------------------
+--- date: lag, window
+--- compute an interval and a summed progression of a date column
+
+SELECT col1, col2,
+date_col - lag(date_col) OVER (ORDER BY date_col) AS delta,
+date_col - first_value(date_col) OVER (ORDER BY date_col) AS total
+from database_name
+ORDER by date_col;
+
+SELECT col1, col2,
+date_col - lag(date_col,1) OVER wn AS delta,
+date_col - first_value(date_col) OVER wn AS total
+FROM database_name
+WINDOW wn AS (ORDER BY date_col)
+ORDER BY date_col;
+
+
+----------------------
+--- update: set, where
+--- update specific values in a given row
+
+UPDATE database_name
+SET any_column = '2019-02-15' WHERE other_column = 9;
+
+
+-----------------------------
+--- create table: primary key 
+--- define base table with a primary key
+
+CREATE TABLE newtable_name(
+ given_id SERIAL PRIMARY KEY,
+ col1_name VARCHAR (50) UNIQUE NOT NULL,
+ col2_name VARCHAR (100) NOT NULL,
+ col3_name VARCHAR (20) NOT NULL
+);
+
+
+-------------------------------------
+--- text-search: tsvector, to_tsquery
+--- indexing text columns for text-search
+
+ALTER TABLE source_table
+ADD column text_column TSVECTOR;
+
+UPDATE source_table s1
+SET text_vectors = to_tsquery(s1.sometext_column)
+FROM source_table s2;
+
+SELECT ran_column, text_vectors
+FROM source_table
+WHERE text_vectors @@ to_tsquery('word');
+

@@ -1,0 +1,41 @@
+Attribute Pattern
+
+- used for large collections with similar structure
+- a subset of these fields share similar characteristics and we want to sort on these subsets of fields
+- the fields we want to sort on are only found in a small subset of documents
+
+- this moving to a key/value convention allows us to deal with rare/unpredictable data fields ("non-deterministic naming") as shown below
+- works well with the characteristics of products, common fields (a date), and thus asset management systems
+
+"specs": [
+{k: "volume", v: 500, u:"ml"}
+{k: "mass", v: 25, u: "gr"}
+{k: "hardness", v: "X25", u: "moor-scale"}
+]
+
+
+{
+title: "Pulp Fiction",
+director: "Quinton Tarantino",
+release_US: ISODate("1994-05-20T01:00:00+01:00"),
+release_UK ISODate("1994-05-25T01:00:00+01:00")
+}
+
+The above approach would require many indexes, instead we can moce the subsets into an array.
+
+{
+title: "Pulp Fiction"
+director: "Quinton Tarantino",
+releases: [
+	{
+	location: "USA",
+	date: ISODate("1994-05-20T01:00:00+01:00")
+	},
+	{
+	location: "UK",
+	date: "ISODate("1994-05-25T01:00:00+01:00")
+	}
+]
+}
+
+Indexes thus become: {"releases.location": 1, "releases.date": 1}

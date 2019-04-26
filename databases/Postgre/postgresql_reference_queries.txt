@@ -1,0 +1,458 @@
+	INTRODUCTION TO RELATIONAL DATABASES IN SQL (02/2019)
+
+''''''''''''''''''''''
+1. YOUR FIRST DATABASE
+
+########################################
+# Query information_schema with SELECT #
+########################################
+
+-- Query the right table in information_schema
+SELECT table_name 
+FROM information_schema.tables
+-- Specify the correct table_schema value
+WHERE table_schema = 'public';
+
+-- Query the right table in information_schema to get columns
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'university_professors' AND table_schema = 'public';
+
+-- Query the first five rows of our table
+SELECT * 
+FROM table_name
+LIMIT 5;
+
+
+################################
+# CREATE your first few TABLEs #
+################################
+
+- entity-relationship diagrams --> entity type and columns ('attributes') denoted
+- transfrom old entity type with a new database model into one with 4 entity types RECUDES REDUNDANCY
+
+CREATE TABLE table_name (
+ column_a data_type,
+ column_b data_type,
+ column_c data_type
+);
+
+CREATE TABLE weather (
+ clouds text,
+ temperature numeric,
+ weather_station char(5)
+);
+
+CREATE TABLE students (
+ ssn integer, 
+ name varchar(64), 
+ dob date, 
+ average_grade numeric(3, 2), -- e.g. 5.54
+ tuition_paid boolean 
+);
+
+
+#################################
+# ADD a COLUMN with ALTER TABLE #
+#################################
+
+- To add columns to empty tables, use this query
+
+ALTER TABLE table_name
+ADD COLUMN column_name data_type;
+
+
+###########################
+# RENAME and DROP COLUMNS #
+###########################
+
+To rename columns:
+ALTER TABLE table_name
+RENAME COLUMN old_name TO new_name;
+
+To delete columns:
+ALTER TABLE table_name
+DROP COLUMN column_name;
+
+
+#################################################
+# Migrate data with INSERT INTO SELECT DISTINCT # 
+#################################################
+
+INSERT INTO ... 
+SELECT DISTINCT ... 
+FROM ...;
+
+INSERT INTO table_b ...;
+SELECT DISTINCT column_name1, column_name2, ... 
+FROM table_a;
+
+
+#################################
+# Delete tables with DROP TABLE #
+#################################
+
+DROP TABLE table_name;
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+2. ENFORCE DATA CONSISTENCY WITH ATTRIBUTE CONSTRAINTS
+
+############################
+Conforming with data types #
+############################
+
+Constraints give the data structure
+Constraints help with consistency, and thus data quality
+Data quality is a business advantage / data science prerequisite
+
+CREATE TABLE transactions (
+ transaction_date date, 
+ amount integer,
+ fee text
+);
+
+-- Let's add a record to the table
+INSERT INTO transactions (transaction_date, amount, fee) 
+VALUES ('2018-09-24', 5454, '30');
+
+
+############
+Type CASTs #
+############
+
+SELECT CAST(some_column AS integer)
+FROM table;
+
+-- Calculate the net amount as amount + fee
+SELECT transaction_date, amount + CAST(fee AS integer) AS net_amount 
+FROM transactions;
+
+Enforced on columns (i.e. attributes)
+Define the so-called "domain" of a column
+Define what operations are possible
+Enfore consistent storage of values
+
+
+##################################
+# Change types with ALTER COLUMN #
+##################################
+
+ALTER TABLE table_name
+ALTER COLUMN column_name
+TYPE varchar(10)
+
+
+##################################
+# Convert types USING a function # 
+##################################
+
+- truncating values before converting TYPE
+
+ALTER TABLE table_name
+ALTER COLUMN column_name
+TYPE varchar(x)
+USING SUBSTRING(column_name FROM 1 FOR x)
+
+
+##########################################
+# Disallow NULL values with SET NOT NULL #
+##########################################
+
+- adding NOT-NULL contraints within a new table
+
+CREATE TABLE students (
+ ssn integer not null,
+ lastname varchar(64) not null,
+ home_phone integer,
+ office_phone integer
+);
+
+- altering existing tables; using SET or DROP
+
+ALTER TABLE students 
+ALTER COLUMN home_phone 
+SET NOT NULL;
+
+ALTER TABLE students 
+ALTER COLUMN ssn 
+DROP NOT NULL;
+
+
+################################################
+# Make your columns UNIQUE with ADD CONSTRAINT #
+################################################
+
+- creating UNIQUE column contraints within a new table
+
+CREATE TABLE table_name (
+ column_name UNIQUE
+);
+
+- altering existing tables using ADD CONSTRAINT
+
+ALTER TABLE table_name
+ADD CONSTRAINT some_name UNIQUE(column_name);
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''
+3. UNNIQUELY IDENTIFY RECORDS WITH KEY CONSTRAINTS
+
+What is a key? 
+
+- attribute(s) that identify a record uniquely
+- as long as attributes can be rmoved: SUPERKEY
+- if no more attributes can be removed: MINIMAL SUPERKEY or KEY
+
+############################################
+# Identify keys with SELECT COUNT DISTINCT #
+############################################
+
+-- Try out different combinations
+SELECT COUNT(DISTINCT(firstname,lastname)) 
+FROM professors;
+
+
+################
+# Primary keys # 
+################
+
+- specifying primary keys
+
+CREATE TABLE products (
+    product_no integer UNIQUE NOT NULL,
+    name text,
+    price numeric
+);
+
+CREATE TABLE products (
+    product_no integer PRIMARY KEY,
+    name text,
+    price numeric
+);
+
+- from a combination of columns
+
+CREATE TABLE example (
+    a integer,
+    b integer,
+    c integer,
+    PRIMARY KEY (a, c)
+);
+
+
+#########################################
+# ADD key CONSTRAINTS to the the tables #
+#########################################
+- defining primary keys to existing columns
+
+ALTER TABLE table_name
+ADD CONSTRAINT some_name PRIMARY KEY (column_name)
+
+
+##############################
+# Add a SERIAL surrogate key #
+##############################
+
+- adding a surrogate key with serial data type
+
+ALTER TABLE cars
+ADD COLUMN id serial PRIMARY KEY;
+
+
+##########################################
+# CONCATenate columns to a surrogate key #
+##########################################
+
+- another type of surrogate key, by combining columns
+
+ALTER TABLE table_name
+ADD COLUMN column_c varchar(256);
+
+UPDATE table_name
+SET column_c = CONCAT(column_a, column_b);
+
+ALTER TABLE table_name
+ADD CONSTRAINT pk PRIMARY KEY (column_c);
+
+
+'''''''''''''''''''''''''''''''''''''''''
+4. GLUE TOGETHER TABLES WITH FOREIGN KEYS
+
+########################################
+# REFERENCE a table with a FOREIGN KEY #
+########################################
+
+- referencing a table to another, via a column
+
+ALTER TABLE a 
+ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b (id);
+
+
+Pay attention to the naming convention employed here: Usually, a foreign key referencing another primary key with name id is named x_id, where x is the name of the referencing table in the singular form.
+
+
+#######################################
+# JOIN tables linked by a foreign key #
+#######################################
+
+-- Select all professors working for universities in the city of Zurich
+SELECT professors.lastname, universities.id, universities.university_city
+FROM professors
+JOIN universities
+ON professors.university_id = universities.id
+WHERE universities.university_city = 'Zurich';
+
+
+###################################### 
+# How to implement N:M relationships #
+######################################
+
+- create a table
+- add foregin keys for every conencted tables
+- add additional attributes
+- No primary key!
+
+CREATE TABLE affiliations (
+ professor_id integer REFERENCES professors (id),
+ organization_id varchar(256) REFERENCES organization (id),
+ function varchar(256)
+);
+
+############################################### 
+#Add foreign keys to the "affiliations" table #
+###############################################
+
+-- Add a professor_id column
+ALTER TABLE affiliations
+ADD COLUMN professor_id integer REFERENCES professors (id);
+
+-- Rename the organization column to organization_id
+ALTER TABLE affiliations
+RENAME organization TO organization_id;
+
+-- Add a foreign key on organization_id
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_fkey FOREIGN KEY (organization_id) 
+REFERENCES organizations (id);
+
+
+######################################
+# Populate the "professor_id" column #
+######################################
+
+- update columns based on values in another table
+
+UPDATE table_a
+SET column_to_update = table_b.column_to_update_from
+FROM table_b
+WHERE condition1 AND condition2 AND ...;
+
+-- Set professor_id to professors.id where firstname, lastname correspond to rows in professors
+UPDATE affiliations
+SET professor_id = professors.id
+FROM professors
+WHERE affiliations.firstname = professors.firstname AND affiliations.lastname = professors.lastname;
+
+- drop unnecessary columns
+
+-- Drop the firstname column
+ALTER TABLE affiliations
+DROP COLUMN firstname;
+
+-- Drop the lastname column
+ALTER TABLE affiliations
+DROP COLUMN lastname;
+
+#########################
+# Referential integrety #
+#########################
+
+- a record referencing a table must refer to an existing record in that table
+- specificed through foreign keys
+
+
+######################################################
+# Change the referential integrity behavior of a key #
+######################################################
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+ALTER TABLE affiliations
+DROP CONSTRAINT affiliations_organization_id_fkey;
+
+-- Add a new foreign key constraint from affiliations to organizations which cascades deletion
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE;
+
+-- Delete an organization 
+DELETE FROM organizations 
+WHERE id = 'CUREM';
+
+-- Check that no more affiliations with this organization exist
+SELECT * FROM organizations
+WHERE id = 'CUREM';
+
+
+#####################################
+# Count affiliations per university #
+#####################################
+ 
+-- Count the total number of affiliations per university
+SELECT COUNT(*), professors.university_id 
+FROM professors
+JOIN affiliations
+ON affiliations.professor_id = professors.id
+GROUP BY professors.university_id 
+ORDER BY count DESC;
+
+-- Join all tables
+SELECT *
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id;
+
+-- Group the table by organization sector, professor and university city
+SELECT COUNT(*), organizations.organization_sector, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+
+-- Filter the table and sort it
+SELECT COUNT(*), organizations.organization_sector, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+WHERE organizations.organization_sector = 'Media & communication'
+GROUP BY organizations.organization_sector, 
+professors.id, universities.university_city
+ORDER BY count DESC;
+
+
+
+
+
+
+
+
+
+
+
