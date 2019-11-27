@@ -16,8 +16,8 @@
 
 *az storage account create
 	--name demo-store \
-	--resource-group -demo-rg \
-	--location --westeurope \
+	--resource-group demo-rg \
+	--location westeurope \
 	--sku Standard_LRS \
 	--kind StorageV2*
 	
