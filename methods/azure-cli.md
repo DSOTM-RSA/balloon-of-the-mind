@@ -117,7 +117,7 @@
 	--name SampleVM \
 	--size Standard_D2s_v3*
 	
-- ** querying VM using JMES**
+- **querying VM using JMES**
 
 *az vm list-ip-addresses \
 	--name SampleVM \
