@@ -69,7 +69,7 @@
 	--container-name demo-container \
 	--output table*
 	
--**download a blob**
+- **download a blob**
 
 *az storage blob download \
 	--container-name demo-container \
