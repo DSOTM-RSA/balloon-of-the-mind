@@ -1,5 +1,7 @@
 # Managing Azure Resources via the CLI
 
+# Initializing a storage account
+
 - **create a resource group**
 
 *az group create \
@@ -45,9 +47,32 @@
 *az storage container create \
 	--name demo-container*
 	
-- **upload a blob to the container**
+- **upload a blob to a container**
 
 *az storage blob upload \
-	--container-name demo container \
+	--container-name demo-container \
 	--name sample.txt \
 	--file sample.txt* 
+	
+- **bulk upload blobs to a container**
+
+*az storage blob upload-batch \
+	--destination demo-container \
+	--source /home \
+	--pattern \*.txt \
+  --if-unmodifed-since 2019-09-15T2000Z \
+	--[dry-run]*
+	
+- **list the blobs in a container**	
+	
+*az storage blob list \
+	--container-name demo-container \
+	--output table*
+	
+-**download a blob**
+
+*az storage blob download \
+	--container-name demo-container
+	--name sample.txt \
+	--file ~/destination/path/to/file*
+	
