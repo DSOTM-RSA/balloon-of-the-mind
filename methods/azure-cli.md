@@ -14,7 +14,7 @@
 	
 - **create a general V2 storage account**
 
-*az storage account create
+*az storage account create \
 	--name demo-store \
 	--resource-group demo-rg \
 	--location westeurope \
