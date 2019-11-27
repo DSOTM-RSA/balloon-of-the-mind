@@ -35,7 +35,9 @@
 	--resource-group demo-rg \
 	--output table*
 
-*	export AZURE_STORAGE_ACCOUNT=" " \
+- **export variables**
+
+*export AZURE_STORAGE_ACCOUNT=" " \
 	export AZURE_STORAGE_KEY=" "*
 
 - **create a container**
