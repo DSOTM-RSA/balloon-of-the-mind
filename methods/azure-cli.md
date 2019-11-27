@@ -1,6 +1,6 @@
 # Managing Azure Resources via the CLI
 
-# Initializing a storage account
+## Initializing a storage account
 
 - **create a resource group**
 
@@ -72,7 +72,7 @@
 -**download a blob**
 
 *az storage blob download \
-	--container-name demo-container
+	--container-name demo-container \
 	--name sample.txt \
 	--file ~/destination/path/to/file*
 	
