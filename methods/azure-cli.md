@@ -3,7 +3,7 @@
 - **create a resource group**
 
 *az group create \
-	--name demo-rg
+	--name demo-rg \
 	--location westeurope*
 	
 - **check regions available**
