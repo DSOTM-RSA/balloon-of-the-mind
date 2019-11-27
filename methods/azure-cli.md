@@ -18,7 +18,7 @@
 	--name demo-store \
 	--resource-group -demo-rg \
 	--location --westeurope \
-	--sku Standard_LRS
+	--sku Standard_LRS \
 	--kind StorageV2*
 	
 - **delete a resource group**
