@@ -76,3 +76,63 @@
 	--name sample.txt \
 	--file ~/destination/path/to/file*
 	
+	
+## Managing VMs
+
+- **create a Linux VM**
+
+*az vm create \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--image UbuntuLTS \
+	--size "Standard_DS5_v2" \
+	--admin-username azureuser \
+	--generate-ssh-keys \
+	--verbose
+	--[no-wait]*
+	
+- **get all images in the Marketplace of a particular type**
+
+*az vm image list \
+	--sku Wordpress \
+	--output table \
+	--all*
+	
+*az vm image list \
+	--location westus \
+	--publisher Microsoft \
+	--output table*
+	
+- **list resize possibilities for a given VM**
+
+*az vm list-vm-resize-options \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--output table*
+	
+- **resize a VM**
+
+*az vm resize \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--size Standard_D2s_v3*
+	
+- ** querying VM using JMES**
+
+*az vm list-ip-addresses \
+	--name SampleVM \
+	--ouput table*
+	
+*az vm show \
+	--resource-group demo-rg \
+	--name SampleVM*
+	
+*az vm show \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--query "osProfile.adminUsername"*
+	
+*az vm show \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--query "netorkProfile.networkInterfaces[].id" -o tsv*
