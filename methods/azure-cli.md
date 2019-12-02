@@ -136,3 +136,20 @@
 	--resource-group demo-rg \
 	--name SampleVM \
 	--query "netorkProfile.networkInterfaces[].id" -o tsv*
+	
+## Create a virtual netowrk (VNet)
+
+**- create a resource group**
+
+*az group create \
+	--name vm-networks \
+	--location westeurope*
+	
+**- create a virtual network**
+
+*az network vnet create \
+	--name myVnet \
+	--resource-group vm-networks \
+	--subnet default*
+	
+**
