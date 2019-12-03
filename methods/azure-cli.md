@@ -137,19 +137,49 @@
 	--name SampleVM \
 	--query "netorkProfile.networkInterfaces[].id" -o tsv*
 	
-## Create a virtual netowrk (VNet)
+## Create a virtual network (VNet)
 
 **- create a resource group**
 
 *az group create \
-	--name vm-networks \
-	--location westeurope*
+	--name <resource-group> \
+	--location <location>*
 	
 **- create a virtual network**
 
 *az network vnet create \
-	--name myVnet \
-	--resource-group vm-networks \
+	--name <vnet-name> \
+	--resource-group <resource-group> \
 	--subnet default*
 	
-**
+## Encrypting VM disks
+
+**- enable encrpytion [pre-req :: an enabled keyvault]**
+
+	*az keyvault create \
+	--name <keyvault-name> \
+	--resource-group <resource-group> \
+	--location <location> \
+	--enabled-for-disk-encryption True*
+	
+**- encrpyt an existing disk**
+	
+	*az vm encryption enable \
+	--resource-group <resource-group> \
+	--name <vm-name> \
+	--disk-encrption-keyvault <keyvault-name> \
+	-volume-type [all | os | data] \
+	--skipvmbackup*
+	
+**- view status of disk**
+
+	*az vm encrpytion show \
+	--resource-group <resource-group> \
+	--name <vm-name>*
+	
+**- decrpyt a drive**
+
+	*az vm encrpytion disable \
+	--resource-group <resource-group> \
+	--name <vm-name> \
+	--volume-type [all | disk | data]*
