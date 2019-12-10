@@ -3,6 +3,7 @@
 #load libraries
 library(shiny)
 library(DBI)
+library(keyring)
 library(dplyr)
 library(openssl)
 library(parsedate)
@@ -22,7 +23,8 @@ tbl_issues <- "issues2"
 create_owners_table <- function() {
     
     db_exists <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                           port=5432,user="postgres",password="monica")
+                           port=5432,user=keyring::key_list("postgresql")[1,2],
+                           ,password=keyring::key_get("postgresql","postgres"))
     
     print("Connecting to App - Checking Prerequisites")
     
@@ -50,7 +52,8 @@ create_owners_table <- function() {
 create_issues_table <- function() {
   
   db_exists <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                         port=5432,user="postgres",password="monica")
+                         port=5432,user=keyring::key_list("postgresql")[1,2],
+                         ,password=keyring::key_get("postgresql","postgres"))
   
   # if table does not exist create it
   if(!tbl_issues %in% dbListTables(db_exists)){
@@ -91,7 +94,8 @@ data_child<-c("hen","hippo","dolphin","rhino","lion","zebra","hyena","giraffe","
 create_issue <- function(class_in,unit_in,product_in,severity_in,effort_in,desc_short_in,desc_long_in,parent_in,child_in,user_in,assignee_in,date_in){#,effort_in,desc_short_in,desc_long_in,parent_in,child_in,user_in,assignee_in) {
   
   conn_createissue <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                                port=5432,user="postgres",password="monica")
+                                port=5432,user=keyring::key_list("postgresql")[1,2],
+                                ,password=keyring::key_get("postgresql","postgres"))
   
 ##, effort, desc_short, desc_long, parent, child, userid, assignee)
   query_createissue <-isolate(sqlInterpolate(conn_createissue,
@@ -123,7 +127,8 @@ create_issue <- function(class_in,unit_in,product_in,severity_in,effort_in,desc_
 get_issue <- function(class_in, start_in, end_in) {
   
   conn_geteissue <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                                port=5432,user="postgres",password="monica")
+                                port=5432,user=keyring::key_list("postgresql")[1,2],
+                              ,password=keyring::key_get("postgresql","postgres"))
   
   query_getissue <- isolate(sqlInterpolate(conn_geteissue, 
                                            "SELECT * from issues2 WHERE
@@ -156,7 +161,8 @@ get_issue <- function(class_in, start_in, end_in) {
 report_generation <- function() {
   
   conn_report <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                              port=5432,user="postgres",password="monica")
+                              port=5432,user=keyring::key_list("postgresql")[1,2],
+                           ,password=keyring::key_get("postgresql","postgres"))
   
   a<-dbGetQuery(conn_report,"SELECT product, class, count(class) AS n_count
                                       FROM issues2
@@ -201,7 +207,8 @@ create_user <- function(user_in,password_in,hash_in) {
   #input <- input
   
   conn_createuser <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                               port=5432,user="postgres",password="monica")
+                               port=5432,user=keyring::key_list("postgresql")[1,2],
+                               ,password=keyring::key_get("postgresql","postgres"))
   
   query_createuser <-isolate(sqlInterpolate(conn_createuser,
                                             "INSERT into owners (name, password, hash)
@@ -225,7 +232,8 @@ get_user <- function(user_check) {
     #input <- input
     
     conn_getuser <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                              port=5432,user="postgres",password="monica")
+                              port=5432,user=keyring::key_list("postgresql")[1,2],
+                              ,password=keyring::key_get("postgresql","postgres"))
     
     query_getuser <-isolate(sqlInterpolate(conn_getuser,
                                            "SELECT * FROM owners WHERE name = ?value_user;",
