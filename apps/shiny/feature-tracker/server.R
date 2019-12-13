@@ -3,63 +3,60 @@
 #load libraries
 library(shiny)
 library(DBI)
+library(pool)
 library(keyring)
 library(dplyr)
 library(openssl)
 library(parsedate)
 
 
-# set database variables
-db_name <- "postgres"
+# DATABASE SETUP
 tbl_owner <- "owners"
 tbl_issues <- "issues2"
 
 
+# creat pool to handle database connections
+pool <- dbPool(drv = RPostgres::Postgres(),dbname = "postgres",
+               host = "localhost", 
+               user = keyring::key_list("postgresql")[1,2],
+               password = keyring::key_get("postgresql","postgres"),
+               port=5432)
 
 
-# define functions
-
+# FUCNTIONS
 # create table to hold users 
 create_owners_table <- function() {
-    
-    db_exists <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                           port=5432,user=keyring::key_list("postgresql")[1,2],
-                           ,password=keyring::key_get("postgresql","postgres"))
     
     print("Connecting to App - Checking Prerequisites")
     
     # if table does not exist create it
-    if(!tbl_owner %in% dbListTables(db_exists)){
+    if(!tbl_owner %in% dbListTables(pool)){
         print("Creating Initial Tables - Users")
         
-        setup_query <-dbSendQuery(db_exists,
+        setup_query <-dbSendQuery(pool,
                                   "CREATE TABLE owners(
                                       ownerid SERIAL PRIMARY KEY,
                                       name TEXT NOT NULL,
                                       password TEXT NOT NULL,
-                                      hash TEXT NOT NULL
-                                  );")
+                                      hash TEXT NOT NULL);"
+                                  )
         
-        # print message if table already exisits
+        # if table already exisits
         print("Table Created - Users")
         
-        dbDisconnect(db_exists)
     }
     
 }
 
+
 # create table to hold issues
 create_issues_table <- function() {
   
-  db_exists <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                         port=5432,user=keyring::key_list("postgresql")[1,2],
-                         ,password=keyring::key_get("postgresql","postgres"))
-  
   # if table does not exist create it
-  if(!tbl_issues %in% dbListTables(db_exists)){
+  if(!tbl_issues %in% dbListTables(pool)){
     print("Creating Initial Tables - Issues")
     
-    setup_query <-dbSendQuery(db_exists,
+    setup_query <-dbSendQuery(pool,
                               "CREATE TABLE issues2(
                                       issueid SERIAL PRIMARY KEY,
                                       class TEXT,
@@ -76,10 +73,9 @@ create_issues_table <- function() {
                                       date TIMESTAMP);"
                               )
     
-    # print message if table already exisits
+    # if table already exisits
     print("Table Created - Issues")
     
-    dbDisconnect(db_exists)
   }
   
 }
@@ -91,18 +87,22 @@ data_child<-c("hen","hippo","dolphin","rhino","lion","zebra","hyena","giraffe","
 
 
 # create issue
-create_issue <- function(class_in,unit_in,product_in,severity_in,effort_in,desc_short_in,desc_long_in,parent_in,child_in,user_in,assignee_in,date_in){#,effort_in,desc_short_in,desc_long_in,parent_in,child_in,user_in,assignee_in) {
+create_issue <- function(class_in, unit_in, product_in, 
+                         severity_in, effort_in, desc_short_in, 
+                         desc_long_in, parent_in, child_in, 
+                         user_in,assignee_in,date_in){
   
-  conn_createissue <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                                port=5432,user=keyring::key_list("postgresql")[1,2],
-                                ,password=keyring::key_get("postgresql","postgres"))
-  
-##, effort, desc_short, desc_long, parent, child, userid, assignee)
-  query_createissue <-isolate(sqlInterpolate(conn_createissue,
-                                             "INSERT into issues2 (class, unit, product, severity, effort, desc_short, desc_long, parent, child, userid, assignee, date)
-                                             
-                                              VALUES(?value_class, ?value_unit, ?value_product, ?value_severity, ?value_effort,?value_short, ?value_long, ?value_parent, ?value_child, ?value_user, ?value_assignee, ?value_date);",
-                                              #,?value_severity,?value_effort,?value_desc_short,?value_desc_long,?value_parent,?value_child,?value_user,?value_assignee);",
+
+  query_createissue <-isolate(sqlInterpolate(pool,
+                                             "INSERT into issues2(
+                                             class, unit, product, 
+                                             severity, effort, desc_short, 
+                                             desc_long, parent, child, 
+                                             userid, assignee, date)
+                                             VALUES(?value_class, ?value_unit, ?value_product, 
+                                             ?value_severity, ?value_effort,?value_short, 
+                                             ?value_long, ?value_parent, ?value_child, 
+                                             ?value_user, ?value_assignee, ?value_date);",
                                              value_class=class_in,
                                              value_unit=unit_in,
                                              value_product=product_in,
@@ -114,10 +114,12 @@ create_issue <- function(class_in,unit_in,product_in,severity_in,effort_in,desc_
                                              value_parent=parent_in,
                                              value_child=child_in,
                                              value_user=user_in,
-                                             value_assignee=assignee_in,#),)
-                                             value_date=date_in))
+                                             value_assignee=assignee_in,
+                                             value_date=date_in
+                                             )
+                              )
   
-  dbSendQuery(conn_createissue,query_createissue)
+  dbSendQuery(pool,query_createissue)
   
   
 }
@@ -126,19 +128,16 @@ create_issue <- function(class_in,unit_in,product_in,severity_in,effort_in,desc_
 # retrieve issue 
 get_issue <- function(class_in, start_in, end_in) {
   
-  conn_geteissue <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                                port=5432,user=keyring::key_list("postgresql")[1,2],
-                              ,password=keyring::key_get("postgresql","postgres"))
-  
-  query_getissue <- isolate(sqlInterpolate(conn_geteissue, 
+  query_getissue <- isolate(sqlInterpolate(pool, 
                                            "SELECT * from issues2 WHERE
                                            class = ?value_class AND date BETWEEN ?value_start AND ?value_end;",
                                            value_class=class_in,
                                            value_start=start_in,
                                            value_end=end_in
-                                           ))
+                                           )
+                            )
   
-  issue_status <- dbGetQuery(conn_geteissue,query_getissue)
+  issue_status <- dbGetQuery(pool,query_getissue)
   
   return(issue_status)
   
@@ -147,78 +146,51 @@ get_issue <- function(class_in, start_in, end_in) {
 
 ## Reporting Section
 
-# create views in PG
-# recall and plot
-# timer (wait for compute)
-# download function
-
-# count issues per product
-# workload per class
-# issues per user, assignee table
-# sum (workload) per assignee by class
-
-
-report_generation <- function() {
+report_generation <- function(section) {
   
-  conn_report <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                              port=5432,user=keyring::key_list("postgresql")[1,2],
-                           ,password=keyring::key_get("postgresql","postgres"))
+  if (section == "part_a") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT product, class, count(class) AS n_count 
+                     FROM issues2 GROUP BY product, class;")
+    return(temp_section)
+    
+  } else if (section == "part_b") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT class, sum(effort) sum_effort_hrs 
+                     FROM issues2 GROUP BY class;")
+    return(temp_section)
+    
+  } else if (section == "part_c") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT userid, assignee, count(issueid) open_issues 
+                     FROM issues2 GROUP BY userid, assignee;")
+    return(temp_section)
+    
+  } else if (section == "part_d") {
+    
+    temp_section <-dbGetQuery(pool, "SELECT class, product, assignee, count(issueid) allocated_issues 
+                      FROM issues2 GROUP BY class, product, assignee")
+    return(temp_section)
+  }
   
-  a<-dbGetQuery(conn_report,"SELECT product, class, count(class) AS n_count
-                                      FROM issues2
-                                      GROUP BY product, class;")
-  
-  b<-dbGetQuery(conn_report,"SELECT class, sum(effort) sum_effort_hrs
-                                       FROM issues2
-                                        GROUP BY class;")
-  
-  
-  c<-dbGetQuery(conn_report,"SELECT userid, assignee, count(issueid) open_issues
-                FROM issues2 
-                GROUP BY userid, assignee;")
-  
-  res <- list(a,b,c)
-  
-  return(res)
-
-  
-  
-  #query_three <- isolate(sqlInterpolate(conn_report,
-  #                                      "SELECT userid, assignee, count(issueid) open_issues
-   #                                     FROM issues2
-   #                                     GROUP BY userid, assignee;"))
-  
-  
-  #query_four <- isolate(sqlInterpolate(conn_report,
-  #                                     "SELECT class, product, assignee, count(issueid) allocated_issues
-  #                                     FROM issues2
-  #                                     GROUP BY class,product,assignee;"))
-  
-  #reports1 <-dbSendQuery(conn_report,query_one)
-  
-
-  
+  report <- tmp_section
+  return(report)
 }
 
 
 # create user
 create_user <- function(user_in,password_in,hash_in) {
   
-  #input <- input
-  
-  conn_createuser <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                               port=5432,user=keyring::key_list("postgresql")[1,2],
-                               ,password=keyring::key_get("postgresql","postgres"))
-  
-  query_createuser <-isolate(sqlInterpolate(conn_createuser,
+  query_createuser <-isolate(sqlInterpolate(pool,
                                             "INSERT into owners (name, password, hash)
-                                              VALUES(?value_name,?value_password,?value_hash);",
+                                            VALUES(?value_name,?value_password,?value_hash);",
                                             value_name=user_in,
                                             value_password=password_in,
-                                            value_hash=hash_in))
+                                            value_hash=hash_in
+                                            )
+                             )
   
-  #valPassword=input$new_pw,
-  dbSendQuery(conn_createuser,query_createuser)
+  dbSendQuery(pool,query_createuser)
   
   print(paste0("User ",user_in," Created"))
   
@@ -229,17 +201,14 @@ create_user <- function(user_in,password_in,hash_in) {
 # check if users exist
 get_user <- function(user_check) {
     
-    #input <- input
+    query_getuser <-isolate(sqlInterpolate(pool,
+                                           "SELECT * FROM owners 
+                                           WHERE name = ?value_user;",
+                                           value_user=user_check
+                                           )
+                            )
     
-    conn_getuser <- dbConnect(RPostgres::Postgres(),dbname=db_name,
-                              port=5432,user=keyring::key_list("postgresql")[1,2],
-                              ,password=keyring::key_get("postgresql","postgres"))
-    
-    query_getuser <-isolate(sqlInterpolate(conn_getuser,
-                                           "SELECT * FROM owners WHERE name = ?value_user;",
-                                           value_user=user_check))
-    
-    user_status <-dbGetQuery(conn_getuser,query_getuser)
+    user_status <-dbGetQuery(pool,query_getuser)
     
     print("Checking if User Exists")
     
@@ -321,7 +290,6 @@ shinyServer(function(input, output, session) {
     })
     
     
-    
     output$login_status <- renderUI({
         if(input$login == 0){
             return(NULL)
@@ -332,6 +300,42 @@ shinyServer(function(input, output, session) {
         }
     })
     
+    
+    # tags for reports
+    output$report1_status <- renderUI({
+      if(input$report_one == 0){
+        return(NULL)
+      } else {
+          return(tags$strong(span("Issues Per Class & Product", style = "color:black")))
+      }
+    })
+    
+    output$report2_status <- renderUI({
+      if(input$report_two == 0){
+        return(NULL)
+      } else {
+        return(tags$strong(span("Estimated Effort Per Class", style = "color:black")))
+      }
+    })
+    
+    output$report3_status <- renderUI({
+      if(input$report_three == 0){
+        return(NULL)
+      } else {
+        return(tags$strong(span("Issuer & Assignee Relationship", style = "color:black")))
+      }
+    })
+    
+    output$report4_status <- renderUI({
+      if(input$report_four == 0){
+        return(NULL)
+      } else {
+        return(tags$strong(span("Assignee Load Per Class & Product", style = "color:black")))
+      }
+    })
+    
+    
+    
     observeEvent(input$register_account, {
         showModal(
             modalDialog(title = "Create Login", size = "m", easyClose = FALSE, footer = modalButton("Close"), 
@@ -340,10 +344,7 @@ shinyServer(function(input, output, session) {
                         actionButton(inputId = "register_user", label = "Submit"),
                         p(input$register_user),
                         uiOutput("register_status")
-                        
-                        
                         )
-                        
             )
         
         
@@ -357,7 +358,7 @@ shinyServer(function(input, output, session) {
         print("- User: logged out")
     })
     
-    #updateSelectizeInput(session, 'foo', choices = data_in, server = TRUE)
+
     
     observe({
         if(loggedIn()){
@@ -396,22 +397,17 @@ shinyServer(function(input, output, session) {
           
           
       
-          
-          
           # wait on submit to get issues
           getIssuesEvent <- observeEvent(input$form_button_get_issues, {
-
             
             # map user inputs to function
             class_get <- input$form_get_class
             start_get <- format_iso_8601(input$form_get_date[1])
             end_get <- format_iso_8601(input$form_get_date[2]+(24*60*60)) # make dateInput inclusive
             
-            
             # make query to database
             temp_submission<-get_issue(class_get, start_get, end_get)
             
-          
             # render above query   
             output$renderResults <-renderDataTable({
               
@@ -423,16 +419,15 @@ shinyServer(function(input, output, session) {
             
           })
           
-        
           
           # first report
           getReportsEvent1 <- observeEvent(input$report_one, {
           
-            temp_reports <-report_generation()
+            temp_report <-report_generation("part_a")
             
             output$report1_table <- renderDataTable({
               
-              temp_reports[[1]]
+              temp_report
               
             },options = list(pageLength=10,searching=FALSE))
             
@@ -442,11 +437,11 @@ shinyServer(function(input, output, session) {
           # second report
           getReportsEvent2 <- observeEvent(input$report_two, {
             
-            temp_reports <-report_generation()
+            temp_report <-report_generation("part_b")
             
             output$report2_table <- renderDataTable({
               
-              temp_reports[[2]]
+              temp_report
               
             },options = list(pageLength=10,searching=FALSE))
             
@@ -457,22 +452,35 @@ shinyServer(function(input, output, session) {
           # third report 
           getReportsEvent3 <- observeEvent(input$report_three, {
             
-            temp_reports <-report_generation()
+            temp_report <-report_generation("part_c")
             
             output$report3_table <- renderDataTable({
               
-              temp_reports[[3]]
+              temp_report
               
             },options = list(pageLength=10,searching=FALSE))
             
             
           })
           
+          # fourth report
+          getReportsEvent4 <- observeEvent(input$report_four, {
+            
+            temp_report <-report_generation("part_d")
+            
+            output$report4_table <- renderDataTable({
+              
+              temp_report
+              
+            },options = list(pageLength=10,searching=FALSE))
+            
+            span("print this")
+            
+          })
+          
           
     
-          
-          
-          
+          # UI ORGANISATION
           
             output$App_Panel <- renderUI({
                 fluidPage(
@@ -534,11 +542,17 @@ shinyServer(function(input, output, session) {
                                           ),
                                           
                                           mainPanel(
+                                            uiOutput("report1_status"),
                                             dataTableOutput("report1_table"),
-                                            p(), 
+                                            p(),
+                                            uiOutput("report2_status"),
                                             dataTableOutput("report2_table"),
                                             p(),
-                                            dataTableOutput("report3_table")
+                                            uiOutput("report3_status"),
+                                            dataTableOutput("report3_table"),
+                                            p(),
+                                            uiOutput("report4_status"),
+                                            dataTableOutput("report4_table")
                                           )
                                         )
                                                  
@@ -576,9 +590,6 @@ shinyServer(function(input, output, session) {
         }
     })
     
-  
-    
     
 })
-
 
