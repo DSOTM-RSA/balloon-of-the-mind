@@ -11,11 +11,11 @@ library(parsedate)
 
 
 # DATABASE SETUP
-tbl_owner <- "owners"
-tbl_issues <- "issues2"
+tbl_owner <- "users"
+tbl_issues <- "issues"
 
 
-# creat pool to handle database connections
+# create pool to handle database connections
 pool <- dbPool(drv = RPostgres::Postgres(),dbname = "postgres",
                host = "localhost", 
                user = keyring::key_list("postgresql")[1,2],
@@ -23,26 +23,28 @@ pool <- dbPool(drv = RPostgres::Postgres(),dbname = "postgres",
                port=5432)
 
 
-# FUCNTIONS
+# FUNCTIONS
 # create table to hold users 
-create_owners_table <- function() {
+create_users_table <- function() {
     
     print("Connecting to App - Checking Prerequisites")
     
     # if table does not exist create it
     if(!tbl_owner %in% dbListTables(pool)){
         print("Creating Initial Tables - Users")
+      
+      conn <- poolCheckout(pool)
         
-        setup_query <-dbSendQuery(pool,
-                                  "CREATE TABLE owners(
+        setup_query <-dbSendQuery(conn,
+                                  "CREATE TABLE users(
                                       ownerid SERIAL PRIMARY KEY,
                                       name TEXT NOT NULL,
                                       password TEXT NOT NULL,
                                       hash TEXT NOT NULL);"
                                   )
         
-        # if table already exisits
-        print("Table Created - Users")
+        setup_query
+        poolReturn(conn)
         
     }
     
@@ -56,8 +58,10 @@ create_issues_table <- function() {
   if(!tbl_issues %in% dbListTables(pool)){
     print("Creating Initial Tables - Issues")
     
-    setup_query <-dbSendQuery(pool,
-                              "CREATE TABLE issues2(
+    conn<-poolCheckout(pool)
+    
+    setup_query <-dbSendQuery(conn,
+                              "CREATE TABLE issues(
                                       issueid SERIAL PRIMARY KEY,
                                       class TEXT,
                                       unit TEXT,
@@ -73,17 +77,12 @@ create_issues_table <- function() {
                                       date TIMESTAMP);"
                               )
     
-    # if table already exisits
-    print("Table Created - Issues")
+    setup_query
     
+    poolReturn(conn)
   }
   
 }
-
-# get projects available
-data_parent<-c("fruit","basket","chips","coke","fanta","sprite","whiskey")
-data_child<-c("hen","hippo","dolphin","rhino","lion","zebra","hyena","giraffe","meerkat")
-
 
 
 # create issue
@@ -93,8 +92,9 @@ create_issue <- function(class_in, unit_in, product_in,
                          user_in,assignee_in,date_in){
   
 
-  query_createissue <-isolate(sqlInterpolate(pool,
-                                             "INSERT into issues2(
+  conn<-poolCheckout(pool)
+  query_createissue <-isolate(sqlInterpolate(conn,
+                                             "INSERT into issues(
                                              class, unit, product, 
                                              severity, effort, desc_short, 
                                              desc_long, parent, child, 
@@ -119,8 +119,8 @@ create_issue <- function(class_in, unit_in, product_in,
                                              )
                               )
   
-  dbSendQuery(pool,query_createissue)
-  
+  dbSendQuery(conn,query_createissue)
+  poolReturn(conn)
   
 }
 
@@ -129,7 +129,7 @@ create_issue <- function(class_in, unit_in, product_in,
 get_issue <- function(class_in, start_in, end_in) {
   
   query_getissue <- isolate(sqlInterpolate(pool, 
-                                           "SELECT * from issues2 WHERE
+                                           "SELECT * from issues WHERE
                                            class = ?value_class AND date BETWEEN ?value_start AND ?value_end;",
                                            value_class=class_in,
                                            value_start=start_in,
@@ -144,45 +144,13 @@ get_issue <- function(class_in, start_in, end_in) {
 }
 
 
-## Reporting Section
-
-report_generation <- function(section) {
-  
-  if (section == "part_a") {
-    
-    temp_section<-dbGetQuery(pool, "SELECT product, class, count(class) AS n_count 
-                     FROM issues2 GROUP BY product, class;")
-    return(temp_section)
-    
-  } else if (section == "part_b") {
-    
-    temp_section<-dbGetQuery(pool, "SELECT class, sum(effort) sum_effort_hrs 
-                     FROM issues2 GROUP BY class;")
-    return(temp_section)
-    
-  } else if (section == "part_c") {
-    
-    temp_section<-dbGetQuery(pool, "SELECT userid, assignee, count(issueid) open_issues 
-                     FROM issues2 GROUP BY userid, assignee;")
-    return(temp_section)
-    
-  } else if (section == "part_d") {
-    
-    temp_section <-dbGetQuery(pool, "SELECT class, product, assignee, count(issueid) allocated_issues 
-                      FROM issues2 GROUP BY class, product, assignee")
-    return(temp_section)
-  }
-  
-  report <- tmp_section
-  return(report)
-}
-
-
 # create user
 create_user <- function(user_in,password_in,hash_in) {
   
-  query_createuser <-isolate(sqlInterpolate(pool,
-                                            "INSERT into owners (name, password, hash)
+  conn<-poolCheckout(pool)
+  
+  query_createuser <-isolate(sqlInterpolate(conn,
+                                            "INSERT into users (name, password, hash)
                                             VALUES(?value_name,?value_password,?value_hash);",
                                             value_name=user_in,
                                             value_password=password_in,
@@ -190,7 +158,8 @@ create_user <- function(user_in,password_in,hash_in) {
                                             )
                              )
   
-  dbSendQuery(pool,query_createuser)
+  dbSendQuery(conn,query_createuser)
+  poolReturn(conn)
   
   print(paste0("User ",user_in," Created"))
   
@@ -202,7 +171,7 @@ create_user <- function(user_in,password_in,hash_in) {
 get_user <- function(user_check) {
     
     query_getuser <-isolate(sqlInterpolate(pool,
-                                           "SELECT * FROM owners 
+                                           "SELECT * FROM users 
                                            WHERE name = ?value_user;",
                                            value_user=user_check
                                            )
@@ -217,11 +186,48 @@ get_user <- function(user_check) {
 }
 
 
+## Reporting Section
 
-# Initial setup
+report_generation <- function(section) {
+  
+  if (section == "part_a") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT product, class, count(class) AS n_count 
+                     FROM issues GROUP BY product, class;")
+    return(temp_section)
+    
+  } else if (section == "part_b") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT class, sum(effort) sum_effort_hrs 
+                     FROM issues GROUP BY class;")
+    return(temp_section)
+    
+  } else if (section == "part_c") {
+    
+    temp_section<-dbGetQuery(pool, "SELECT userid, assignee, count(issueid) open_issues 
+                     FROM issues GROUP BY userid, assignee;")
+    return(temp_section)
+    
+  } else if (section == "part_d") {
+    
+    temp_section <-dbGetQuery(pool, "SELECT class, product, assignee, count(issueid) allocated_issues 
+                      FROM issues GROUP BY class, product, assignee")
+    return(temp_section)
+  }
+  
+  report <- tmp_section
+  return(report)
+}
+
+
+# Initial Setup
 # Create users and issues tables if they don't alreasdy exist
-create_owners_table()
+create_users_table()
 create_issues_table()
+
+# Set projects available
+data_parent<-c("Mimas", "Enceladus", "Tethys", "Dione", "Rhea", "Titan")
+data_child<-c("Pre-Boost", "Launch", "Transit", "Approach", "Orbit", "Landing", "Aquisition", "LTO")
 
 
 # server function
@@ -368,7 +374,7 @@ shinyServer(function(input, output, session) {
                                options = list(create=TRUE,multiple=TRUE,maxOptions=5), server = TRUE)
           
           updateSelectizeInput(session, 'form_child', choices = data_child,
-                               options = list(create=TRUE,multiple=TRUE,maxOptions=3),server = TRUE)
+                               options = list(create=TRUE,multiple=TRUE,maxOptions=5),server = TRUE)
           
           
           # wait on submit to create issues
