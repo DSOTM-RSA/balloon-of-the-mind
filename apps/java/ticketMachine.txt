@@ -1,0 +1,195 @@
+
+/**
+ * Write a description of class TicketMachineNightFare here.
+ *
+ * @author D Gray
+ * @version 0.6
+ */
+public class TicketMachineNightFare
+{
+    // instance variables - replace the example below with your own
+    private int ticketprice;
+    private int balance;
+    private int total;
+    private int sold;
+
+    /**
+     * Constructor for objects of class TicketMachineNightFare
+     */
+    public TicketMachineNightFare(int TicketPrice)
+    {
+        // initialise instance variables
+        // ticket price
+        ticketprice = TicketPrice;
+        // cash paid by customer so far for the current ticket
+        balance = 0;
+        // total amount collected by machine so far
+        total = 0;
+        // tickets sold so far as check and balance
+        sold= 0;
+        
+    }
+    
+    
+       public TicketMachineNightFare()
+    
+    {
+    
+        ticketprice = 600;
+        balance = 0;
+        total = 0;
+    
+    }
+
+    
+    /**
+     * returns the ticket price for this machine
+     */
+    public int getTicketPrice()
+    {
+        
+        return ticketprice;
+        
+    }
+    
+    
+    /**
+     * returns the balance the customer has inserted
+     */
+    
+    public int getBalance()
+    {
+    
+        return balance;
+    
+    }
+    
+    
+    /**
+     * get total inserted
+     * 
+     */
+    
+    public int getTotal()
+    {
+ 
+        return total;
+    
+    }
+    
+    
+    public int getSold() 
+    {
+    
+        return sold;
+    
+    }
+    
+    
+     /**
+     * Prompt user for money
+     */
+   public void promptUser()
+   
+   {
+    
+    System.out.println("Please insert " + ticketprice + " cents");
+    System.out.println();
+    
+    }
+    
+    
+    /**
+     * set the balance to the inserted cash plus the existing balance
+     * checks whether an appropriate amount was inserted
+     */
+    
+    public void insertCash(int cashInserted)
+    {
+        
+        if(cashInserted >= 0) {
+            balance = balance + cashInserted;
+        }
+        else {
+            System.out.println("Please insert a positve amount");        
+        }
+    
+    }
+    
+    
+    /**
+     * create a ticket and print it
+     */
+    
+    public void printTicket()
+    {
+    
+    System.out.println("## Blue Line Ticket ##");
+    
+    
+        if (balance >= ticketprice) {
+        
+    // record this sale of a ticket and add to amount already sold
+        sold = sold + 1;
+   
+    // print ticket
+        System.out.println("##########");
+        System.out.println("Ticket No. " + sold);
+        System.out.println("Cash inserted " + balance);
+        System.out.println("##########");
+    
+    // update the total collected by the machine
+        total = total + balance;
+    
+    // update the balance to calculate whether a refund is given
+        balance = balance - ticketprice;
+        }
+    
+        else {
+            System.out.println("Please insert atleast " + (ticketprice-balance)  + 
+                    " cents more to buy this ticket"); 
+   
+        }
+    }
+    
+    
+    /**
+     * return balance
+     */
+    public int returnBalance()
+    {
+    
+    //  amount to refund is equal to existing balance
+    int amountToRefund; 
+    amountToRefund = balance;
+    
+    // balance is reset to 0
+    balance = 0;
+    
+    // correct total to reflect total collected - refund given
+    total = total - amountToRefund;
+    return(amountToRefund);
+    
+    }
+    
+        /**
+     * Empty machine 
+     */
+    public void emptyMachine()
+    {
+        total = 0;
+    
+    }
+    
+    
+    /**
+     * Adjust price of machine
+     */
+    public void setTicketPrice(int newPrice)
+    {
+    
+    ticketprice = newPrice;
+    
+    }
+    
+}
