@@ -3,7 +3,7 @@
  * Write a description of class TicketMachineNightFare here.
  *
  * @author D Gray
- * @version 0.6
+ * @version 0.5
  */
 public class TicketMachineNightFare
 {
@@ -70,10 +70,17 @@ public class TicketMachineNightFare
      * 
      */
     
-    public int getTotal()
+    public void getTotal()
     {
- 
-        return total;
+        if (sold == 0) {
+            
+            System.out.println("####");
+            System.out.println("No tickets have yet been sold");
+            
+        }
+        else {
+            System.out.println("Total cash recieved is " + total);
+        }
     
     }
     
@@ -165,9 +172,6 @@ public class TicketMachineNightFare
     
     // balance is reset to 0
     balance = 0;
-    
-    // correct total to reflect total collected - refund given
-    total = total - amountToRefund;
     return(amountToRefund);
     
     }
