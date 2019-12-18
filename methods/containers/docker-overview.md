@@ -1,4 +1,4 @@
-Working with Docker
+## Working with Docker
 
 ### pull a given image
 docker pull mcr.microsoft.com/dotnet/core/samples:aspnetapp
