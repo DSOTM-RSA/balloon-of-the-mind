@@ -1,12 +1,9 @@
+library(tidyverse)
+
 # functions
 
 # calculate area-of-view of a given lens 
-aov_lens <- function(sensor_size, focal_length) {
-  
-  # set appropriate aspect ratio
-  if (sensor_size == 17.3) {
-    aspect_ratio = 0.75 
-  } else (aspect_ratio = 0.66)
+aov_lens <- function(sensor_size, aspect_ratio, focal_length) {
   
   aov_width <- (180*sensor_size)/(pi*focal_length)
   aov_length <- aov_width*aspect_ratio
@@ -44,37 +41,42 @@ survey_extent <- function(speed, flight_time, half_length, area_block){
 }
 
 
-
-# TESTING 
-library(purrr)
-
-# define some parameters
-lens <- 13.2 # full frame, m4/3, 1# etc.
-zooms <- c(12,17,24,35,50,100,150) # wide-angle, mid, zoom
-
-aov <-aov_lens(13.2,zooms)
-
-segment <-map2(100,aov,segment_size)
-
-block <-map2(segment[1],segment[2],block_size)
-
-survey <-pmap(list(10,20,segment[2],block),survey_extent)
-
-
-plot(zooms,unlist(survey),type = "b",xlab = "",ylab = "")
-
-
 # IMPLEMENTATION
-# purrr: cross() or expand.grid() --> cross all combinations of sensor vs rest
+# build paramters grid :: expand.grid() --> cross all combinations of sensor vs rest
+# call fucntions sequentially
 
-l <- c(17.31,3.2)
-z <- c(12,17,24,35,100)
-h <- c(15,35,50,100,250)
-s <- c(2.5,4,7.5)
-t <- c(5,12,20)
+l <- c(17.3,3.2) # lens
+z <- c(12,17,24,35,100) # zooms
+h <- c(15,35,50,100,250) # heigths
+s <- c(2.5,4,7.5) # speeds
+t <- c(5,12,20) # times
 
-cross_df <-expand.grid(l,z,h,s,t) %>% 
-  set_names(.,c("lens","zoom","height","speed","time"))
-            
-            
+
+# prepare grid
+values_df <-expand.grid(l,z,h,s,t) %>% 
+  set_names(.,c("lens","zoom","height","speed","time")) %>% 
+  mutate(asp=case_when(lens == 17.3 ~ 0.75, TRUE ~ as.numeric(0.66)))
+
+
+aovs<-aov_lens(values_df$lens,values_df$asp,values_df$zoom)  
+
+segment_widths <- segment_size(values_df$height,aovs[[1]])
+
+segment_lengths <- segment_size(values_df$height,aovs[[2]])
+
+blocks <- block_size(segment_widths,segment_lengths)
+
+surveys <- survey_extent(values_df$speed,
+                         values_df$time,
+                         segment_lengths,
+                         blocks) 
+
+# build reference df for planning 
+surveys_df <- cbind(values_df,
+                   segment_widths,
+                   segment_lengths,
+                   blocks,
+                   surveys)
+
+
 
