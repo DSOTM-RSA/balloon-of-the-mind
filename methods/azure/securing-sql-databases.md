@@ -6,10 +6,10 @@
 
 **1. Define parameters**
 
-export ADMINUSER='ServerAdmin'
-export PASSWORD='AdminPassword'
-export SERVERNAME=server$RANDOM
-export RESOURCEGROUP=shorebreak
+export ADMINUSER='ServerAdmin'  \
+export PASSWORD='AdminPassword' \
+export SERVERNAME=server$RANDOM \
+export RESOURCEGROUP=shorebreak \
 export LOCATION=$(az group show --name shorebreak | jq -r '.location')
 
 
@@ -60,13 +60,13 @@ ssh [X.X.X.X]
 
 **3. Install mssql-tools** 
 
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile \ 
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc \
 source ~/.bashrc
 
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
-sudo apt-get update
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add - \
+curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list \
+sudo apt-get update \
 sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
 
@@ -101,13 +101,13 @@ Allow access to Azure services > OFF
 
 **3. Restrict access to the server-level (using IP address rules)**
 
-EXECUTE sp_delete_database_firewall_rule N'Allow appServer database level rule';
+EXECUTE sp_delete_database_firewall_rule N'Allow appServer database level rule'; \
 GO
 
-Firewalls and virtual networks 
-RULE NAME > Allow appServer
-START IP > [start ip]
-END IP > [end ip]
+Firewalls and virtual networks \
+RULE NAME > Allow appServer \
+START IP > [start ip] \
+END IP > [end ip] 
 
 Notes: This method is useful but requires either static IPs or a defined IP range.
 Dynamic IPs that update may lose their connectivity, Virtual Network rules are beneficial in these cases.
@@ -136,21 +136,21 @@ In practice the application itself should use a contained database user to authe
 
 **1. Create a database user**
 
-sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U '[username]' -P '[password]' -N -l 30
+sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U '[username]' -P '[password]' -N -l 30 \
 
 <!-- creates a containerd user, allows access only to the sampleDatabase database -->
-CREATE USER ApplicationUser WITH PASSWORD = 'StrongPassword';
+CREATE USER ApplicationUser WITH PASSWORD = 'StrongPassword'; \
 GO
 
 
 **2. Grant permissions to a user**
 
-ALTER ROLE db_datareader ADD MEMBER ApplicationUser;
-ALTER ROLE db_datawriter ADD MEMBER ApplicationUser;
+ALTER ROLE db_datareader ADD MEMBER ApplicationUser; \ 
+ALTER ROLE db_datawriter ADD MEMBER ApplicationUser; \
 GO
 
 <!-- deny access to particular tables -->
-DENY SELECT ON SalesLT.Address TO ApplicationUser;
+DENY SELECT ON SalesLT.Address TO ApplicationUser; \
 GO
 
 
@@ -162,7 +162,7 @@ sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U 'Applica
 **4. Query data**
 
 <!-- authorized to access this data -->
-SELECT FirstName, LastName, EmailAddress, Phone FROM SalesLT.Customer;
+SELECT FirstName, LastName, EmailAddress, Phone FROM SalesLT.Customer; \
 GO
 
 <!-- not authorized to access this table -->
