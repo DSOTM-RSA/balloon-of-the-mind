@@ -129,8 +129,8 @@ Dynamic IPs that update may lose their connectivity, Virtual Network rules are b
 
 *Firewalls and virtual networks \
 Virtual networks \
-+ Add existing virtual network \*
-*Virtual network > appServerVNET \
+Add existing virtual network \
+Virtual network > appServerVNET \
 Subnet name / prefix > appServerSubnet / 10.0.0.0/24*
 
 *Remove previous IP address rule*
