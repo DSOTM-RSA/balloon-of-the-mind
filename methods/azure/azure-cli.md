@@ -2,86 +2,108 @@
 
 ## Initializing a storage account
 
-- **create a resource group**
+**Create a resource group**
 
-*az group create \
+```bash
+az group create \
 	--name demo-rg \
-	--location westeurope*
-	
-- **check regions available**
+	--location westeurope
+```	
 
-*az account list-locations \
+**Check regions available**
+
+```bash
+az account list-locations \
 	--query "[].{Region:name}" \
-	--out table*
-	
-- **create a general V2 storage account**
+	--out table
+```
 
-*az storage account create \
+**Create a general V2 storage account**
+
+```bash
+az storage account create \
 	--name demo-store \
 	--resource-group demo-rg \
 	--location westeurope \
 	--sku Standard_LRS \
-	--kind StorageV2*
+	--kind StorageV2
+```
 	
-- **delete a resource group**
+- **Delete a resource group**
 
-*az group delete \
-	--name demo-rg*
-	
+```bash
+az group delete \
+	--name demo-rg
+```
+
 ## Working with blobs
 	
-- **list storage account keys*
+**List storage account keys*
 
-*az storage-account keys list \
+```bash
+az storage-account keys list \
 	--account-name demo-store \
 	--resource-group demo-rg \
 	--output table*
+```
 
-- **export variables**
+**Export variables**
 
-*export AZURE_STORAGE_ACCOUNT=" " \
-	export AZURE_STORAGE_KEY=" "*
+```bash
+export AZURE_STORAGE_ACCOUNT=" " \
+	export AZURE_STORAGE_KEY=" 
+```
 
-- **create a container**
+**Create a container**
 
-*az storage container create \
-	--name demo-container*
-	
-- **upload a blob to a container**
+```bash
+az storage container create \
+	--name demo-container
+```	
 
-*az storage blob upload \
+**Upload a blob to a container**
+
+```bash
+az storage blob upload \
 	--container-name demo-container \
 	--name sample.txt \
-	--file sample.txt* 
-	
-- **bulk upload blobs to a container**
+	--file sample.txt
+```
 
-*az storage blob upload-batch \
+**Bulk upload blobs to a container**
+
+```bash
+az storage blob upload-batch \
 	--destination demo-container \
 	--source /home \
 	--pattern \*.txt \
-  --if-unmodifed-since 2019-09-15T2000Z \
-	--[dry-run]*
+  	--if-unmodifed-since 2019-09-15T2000Z \
+	--[dry-run]
+```	
 	
-- **list the blobs in a container**	
-	
-*az storage blob list \
-	--container-name demo-container \
-	--output table*
-	
-- **download a blob**
+**List the blobs in a container**	
 
-*az storage blob download \
+```bash	
+az storage blob list \
+	--container-name demo-container \
+	--output table
+```	
+	
+**Download a blob**
+
+```bash
+az storage blob download \
 	--container-name demo-container \
 	--name sample.txt \
-	--file ~/destination/path/to/file*
-	
+	--file ~/destination/path/to/file
+```	
 	
 ## Managing VMs
 
-- **create a Linux VM**
+**create a Linux VM**
 
-*az vm create \
+```bash
+az vm create \
 	--resource-group demo-rg \
 	--name SampleVM \
 	--image UbuntuLTS \
@@ -89,97 +111,126 @@
 	--admin-username azureuser \
 	--generate-ssh-keys \
 	--verbose
-	--[no-wait]*
-	
-- **get all images in the Marketplace of a particular type**
+	--[no-wait]
+```
 
-*az vm image list \
+**Get all images in the marketplace of a particular type**
+
+```bash
+az vm image list \
 	--sku Wordpress \
 	--output table \
-	--all*
-	
-*az vm image list \
+	--all
+```
+
+```bash
+az vm image list \
 	--location westus \
 	--publisher Microsoft \
-	--output table*
-	
-- **list resize possibilities for a given VM**
+	--output table
+```
 
-*az vm list-vm-resize-options \
-	--resource-group demo-rg \
-	--name SampleVM \
-	--output table*
-	
-- **resize a VM**
+**List resize possibilities for a given VM**
 
-*az vm resize \
+```bash
+az vm list-vm-resize-options \
 	--resource-group demo-rg \
 	--name SampleVM \
-	--size Standard_D2s_v3*
-	
-- **querying VM using JMES**
+	--output table
+```
 
-*az vm list-ip-addresses \
-	--name SampleVM \
-	--ouput table*
-	
-*az vm show \
-	--resource-group demo-rg \
-	--name SampleVM*
-	
-*az vm show \
+**Resize a VM**
+
+```bash
+az vm resize \
 	--resource-group demo-rg \
 	--name SampleVM \
-	--query "osProfile.adminUsername"*
-	
-*az vm show \
+	--size Standard_D2s_v3
+```
+
+**Querying VM using JMES**
+
+```bash
+az vm list-ip-addresses \
+	--name SampleVM \
+	--ouput table
+```
+
+```bash
+az vm show \
+	--resource-group demo-rg \
+	--name SampleVM
+```	
+
+```bash
+az vm show \
 	--resource-group demo-rg \
 	--name SampleVM \
-	--query "netorkProfile.networkInterfaces[].id" -o tsv*
-	
+	--query "osProfile.adminUsername"
+```
+
+```bash
+az vm show \
+	--resource-group demo-rg \
+	--name SampleVM \
+	--query "netorkProfile.networkInterfaces[].id" -o tsv
+```
+
 ## Create a virtual network (VNet)
 
-**- create a resource group**
+**Create a resource group**
 
-*az group create \
+```bash
+az group create \
 	--name <resource-group> \
-	--location <location>*
-	
-**- create a virtual network**
+	--location <location>
+```
 
-*az network vnet create \
+**Create a virtual network**
+
+```bash
+az network vnet create \
 	--name <vnet-name> \
 	--resource-group <resource-group> \
-	--subnet default*
+	--subnet default
+```
 	
 ## Encrypting VM disks
 
-**- enable encrpytion [pre-req :: an enabled keyvault]**
+**Enable encrpytion [pre-req :: an enabled keyvault]**
 
-	*az keyvault create \
+```bash
+az keyvault create \
 	--name <keyvault-name> \
 	--resource-group <resource-group> \
 	--location <location> \
-	--enabled-for-disk-encryption True*
-	
-**- encrpyt an existing disk**
-	
-	*az vm encryption enable \
+	--enabled-for-disk-encryption True
+```
+
+**Encrpyt an existing disk**
+
+```bash
+az vm encryption enable \
 	--resource-group <resource-group> \
 	--name <vm-name> \
 	--disk-encrption-keyvault <keyvault-name> \
 	-volume-type [all | os | data] \
-	--skipvmbackup*
+	--skipvmbackup
+```
 	
-**- view status of disk**
+**View status of disk**
 
-	*az vm encrpytion show \
+```bash
+az vm encrpytion show \
 	--resource-group <resource-group> \
-	--name <vm-name>*
-	
-**- decrpyt a drive**
+	--name <vm-name>
+```
 
-	*az vm encrpytion disable \
+**Decrpyt a drive**
+
+```bash
+az vm encrpytion disable \
 	--resource-group <resource-group> \
 	--name <vm-name> \
-	--volume-type [all | disk | data]*
+	--volume-type [all | disk | data]
+```
