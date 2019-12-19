@@ -1,19 +1,19 @@
 # Securing Azure SQL Databases
 
-Premise: An application hosted on a VM connects to a database hosted on a Azure SQL database logical server. The database holds sensitve customer information such as telephone numbers and addresses. This data should be properly secured.
+**Premise:** An application hosted on a VM connects to a database hosted on a Azure SQL database logical server. The database holds sensitve customer information such as telephone numbers and addresses. This data should be properly secured.
 
-## Configuring the Database Server
+## Configuring the database server
 
-1. Define Parameters
+**1. Define parameters**
 
 export ADMINUSER='ServerAdmin'
 export PASSWORD='AdminPassword'
 export SERVERNAME=server$RANDOM
 export RESOURCEGROUP=shorebreak
-<!-- set the location defined in resource-group  -->
 export LOCATION=$(az group show --name shorebreak | jq -r '.location')
 
-2. Create Logical SERVERNAME
+
+**2. Create the logical server**
 
 az sql server create \
 --name $SERVERNAME \
@@ -22,7 +22,8 @@ az sql server create \
 --admin-user $ADMINUSER \
 --admin-password "$PASSWORD"
 
-3. Create Database
+
+**3. Create the database**
 
 az sql db create \
 --resource-group $RESOURCEGROUP \
@@ -31,7 +32,8 @@ az sql db create \
 --sample-name AdeventurWorksLT \
 --service-objective Basic
 
-4. Get Connection String for this Database
+
+4. **Get the connection string**
 
 az sql db show-connection-string \
 --client sqlcmd \
@@ -39,9 +41,9 @@ az sql db show-connection-string \
 --server $SERVERNAME | jq -r
 
 
-## Configuring the Application Server
+## Configure the application server
 
-1. Create the VM
+**1. Create the VM**
 
 az vm create \
 --resource-group $RESOURCEGROUP \
@@ -50,11 +52,13 @@ az vm create \
 --size Standard_DS2_v2 \
 --generate-ssh-keys
 
-2. Connect to VM
+
+**2. Connect to the VM**
 
 ssh [X.X.X.X]
 
-3. Install mssql.tools 
+
+**3. Install mssql-tools** 
 
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
@@ -65,9 +69,10 @@ curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /et
 sudo apt-get update
 sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
-## Restricting Network Access
 
-1. Allow access to Azure Service (and our VM since it has outbound internet access)
+## Restrict network access
+
+**1. Allow acess to Azure Service (and our VM since it has outbound internet access)**
 
 Azure Portal \
 SQL server \ 
@@ -76,13 +81,13 @@ Firewalls and virtual networks \
 Allow access to Azure services > ON 
 
 
-2. Connect to Database
+**2. Connect to the database**
 
 ssh [X.X.X.X]
 sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase - U '[username]' -U '[password]'
 
 
-3. Restrict access down to the database-level (using IP address rules)
+**3. Restrict access down to the database-level (using IP address rules)**
 
 EXECUTE sp_set_database_firewall_rule N'Alow appServer database rule', '[ip range start]', '[ip range end]'
 GO
@@ -93,7 +98,8 @@ Security \
 Firewalls and virtual networks \
 Allow access to Azure services > OFF
 
-3. Restrict access to the server-level (using Ip address rules)
+
+**3. Restrict access to the server-level (using IP address rules)**
 
 EXECUTE sp_delete_database_firewall_rule N'Allow appServer database level rule';
 GO
@@ -103,10 +109,11 @@ RULE NAME > Allow appServer
 START IP > [start ip]
 END IP > [end ip]
 
-Notes: This method is useful but requires either static IPs or a deffined IP range.
-Dynamic IPs that update may lose their connectivity, Virtual network rules are beneficial in these cases.
+Notes: This method is useful but requires either static IPs or a defined IP range.
+Dynamic IPs that update may lose their connectivity, Virtual Network rules are beneficial in these cases.
 
-4. Using a server-level virtual network rule
+
+**4. Restrict access using a server-level virtual network rule**
 
 Firewalls and virtual networks \
 Virtual networks \
@@ -116,7 +123,8 @@ Subnet name / prefix > appServerSubnet / 10.0.0.0/24
 
 Remove previous IP address rule
 
-## Controlling Who Can Access The Database
+
+## Controlling who can access the database
 
 Authentication is available via SQL authenticatin or Azure Active Directory (AAD)
 
@@ -126,7 +134,7 @@ Authorization refers to what an identity can do; permissions are granted directl
 
 In practice the application itself should use a contained database user to authenticate directly to the database. See [here](https://docs.microsoft.com/sql/relational-databases/security/contained-database-users-making-your-database-portable?view=sql-server-2017)
 
-1. Create a Database User
+**1. Create a database user**
 
 sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U '[username]' -P '[password]' -N -l 30
 
@@ -134,7 +142,8 @@ sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U '[userna
 CREATE USER ApplicationUser WITH PASSWORD = 'StrongPassword';
 GO
 
-2. Grant Permissions to a User
+
+**2. Grant permissions to a user**
 
 ALTER ROLE db_datareader ADD MEMBER ApplicationUser;
 ALTER ROLE db_datawriter ADD MEMBER ApplicationUser;
@@ -144,11 +153,13 @@ GO
 DENY SELECT ON SalesLT.Address TO ApplicationUser;
 GO
 
-3. Login in as created ApplicationUser
+
+**3. Login in as created user**
 
 sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U 'ApplicationUser' -P '[password]' -N -l 30
 
-4. Test getting some data
+
+**4. Query data**
 
 <!-- authorized to access this data -->
 SELECT FirstName, LastName, EmailAddress, Phone FROM SalesLT.Customer;
@@ -157,5 +168,3 @@ GO
 <!-- not authorized to access this table -->
 SELECT * FROM SalesLT.Address;
 GO
-
-
