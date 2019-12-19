@@ -89,7 +89,7 @@ GO
 
 Azure Portal \
 SQL server \ 
-Securtity \
+Security \
 Firewalls and virtual networks \
 Allow access to Azure services > OFF
 
@@ -98,11 +98,64 @@ Allow access to Azure services > OFF
 EXECUTE sp_delete_database_firewall_rule N'Allow appServer database level rule';
 GO
 
-Firewalls and virtual networks \
+Firewalls and virtual networks 
 RULE NAME > Allow appServer
 START IP > [start ip]
 END IP > [end ip]
 
 Notes: This method is useful but requires either static IPs or a deffined IP range.
 Dynamic IPs that update may lose their connectivity, Virtual network rules are beneficial in these cases.
+
+4. Using a server-level virtual network rule
+
+Firewalls and virtual networks \
+Virtual networks \
++ Add existing virtual network \
+Virtual network > appServerVNET \
+Subnet name / prefix > appServerSubnet / 10.0.0.0/24
+
+Remove previous IP address rule
+
+## Controlling Who Can Access The Database
+
+Authentication is available via SQL authenticatin or Azure Active Directory (AAD)
+
+The admin user created at sever initialisation time can authenticate to any database on the srver as te database owner or "dbo".
+
+Authorization refers to what an identity can do; permissions are granted directly to use accounts and/or database roles.
+
+In practice the application itself should use a contained database user to authenticate directly to the database. See [here](https://docs.microsoft.com/sql/relational-databases/security/contained-database-users-making-your-database-portable?view=sql-server-2017)
+
+1. Create a Database User
+
+sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U '[username]' -P '[password]' -N -l 30
+
+<!-- creates a containerd user, allows access only to the sampleDatabase database -->
+CREATE USER ApplicationUser WITH PASSWORD = 'StrongPassword';
+GO
+
+2. Grant Permissions to a User
+
+ALTER ROLE db_datareader ADD MEMBER ApplicationUser;
+ALTER ROLE db_datawriter ADD MEMBER ApplicationUser;
+GO
+
+<!-- deny access to particular tables -->
+DENY SELECT ON SalesLT.Address TO ApplicationUser;
+GO
+
+3. Login in as created ApplicationUser
+
+sqlcmd -S tcp:serverNNNN.database.windows.net,1433 -d sampleDatabase -U 'ApplicationUser' -P '[password]' -N -l 30
+
+4. Test getting some data
+
+<!-- authorized to access this data -->
+SELECT FirstName, LastName, EmailAddress, Phone FROM SalesLT.Customer;
+GO
+
+<!-- not authorized to access this table -->
+SELECT * FROM SalesLT.Address;
+GO
+
 
