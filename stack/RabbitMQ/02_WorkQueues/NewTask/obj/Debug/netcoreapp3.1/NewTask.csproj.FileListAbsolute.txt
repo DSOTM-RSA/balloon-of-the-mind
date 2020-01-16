@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.exe
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\NewTask.pdb
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\02_WorkQueues\NewTask\obj\Debug\netcoreapp3.1\NewTask.pdb

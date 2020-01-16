@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.exe
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\Receive.pdb
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Receive\obj\Debug\netcoreapp3.1\Receive.pdb

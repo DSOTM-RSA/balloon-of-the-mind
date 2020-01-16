@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.exe
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\Worker.pdb
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.dll
+C:\Users\eoedd\Desktop\locstore\projects\stack\Worker\obj\Debug\netcoreapp3.1\Worker.pdb
