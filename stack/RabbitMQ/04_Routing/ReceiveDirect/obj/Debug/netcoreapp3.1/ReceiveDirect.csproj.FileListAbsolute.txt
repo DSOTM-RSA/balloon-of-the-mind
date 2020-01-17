@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.exe
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\ReceiveDirect.pdb
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveDirect\obj\Debug\netcoreapp3.1\ReceiveDirect.pdb

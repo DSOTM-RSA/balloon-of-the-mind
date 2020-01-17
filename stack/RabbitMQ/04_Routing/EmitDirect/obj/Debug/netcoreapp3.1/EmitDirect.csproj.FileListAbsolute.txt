@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.exe
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\EmitDirect.pdb
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\EmitDirect\obj\Debug\netcoreapp3.1\EmitDirect.pdb
