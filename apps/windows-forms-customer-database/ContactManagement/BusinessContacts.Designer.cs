@@ -70,6 +70,8 @@
             this.btnSaveText = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
+            this.btnOpenWord = new System.Windows.Forms.Button();
+            this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -440,11 +442,27 @@
             // 
             this.saveFileDialog2.Filter = "Text Files (*.txt)|*.txt";
             // 
+            // btnOpenWord
+            // 
+            this.btnOpenWord.Font = new System.Drawing.Font("Microsoft Tai Le", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOpenWord.Location = new System.Drawing.Point(1134, 312);
+            this.btnOpenWord.Name = "btnOpenWord";
+            this.btnOpenWord.Size = new System.Drawing.Size(239, 38);
+            this.btnOpenWord.TabIndex = 37;
+            this.btnOpenWord.Text = "Export/Open Word";
+            this.btnOpenWord.UseVisualStyleBackColor = true;
+            this.btnOpenWord.Click += new System.EventHandler(this.btnOpenWord_Click);
+            // 
+            // saveFileDialog3
+            // 
+            this.saveFileDialog3.Filter = "Word Files (*.docx)|*.docx";
+            // 
             // BusinessContacts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1539, 796);
+            this.Controls.Add(this.btnOpenWord);
             this.Controls.Add(this.btnSaveText);
             this.Controls.Add(this.btnExportOpen);
             this.Controls.Add(this.btnAddPicture);
@@ -536,5 +554,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button btnSaveText;
         private System.Windows.Forms.SaveFileDialog saveFileDialog2;
+        private System.Windows.Forms.Button btnOpenWord;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog3;
     }
 }

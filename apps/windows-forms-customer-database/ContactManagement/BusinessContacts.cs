@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO; // needed for file-system use
 using System.Diagnostics;
 using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Word;
 
 namespace ContactManagement
 {
@@ -240,7 +241,7 @@ namespace ContactManagement
 
         private void btnExportOpen_Click(object sender, EventArgs e)
         {
-            _Application excel = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             _Workbook workbook = excel.Workbooks.Add(Type.Missing);
             _Worksheet worksheet = null;
             try
@@ -306,6 +307,47 @@ namespace ContactManagement
                 }
             // 
             Process.Start("notepad.exe", saveFileDialog2.FileName);
+            }
+        }
+
+        private void btnOpenWord_Click(object sender, EventArgs e)
+        {
+            Microsoft.Office.Interop.Word._Application word = new Microsoft.Office.Interop.Word.Application(); //make a new word object
+            Document doc = word.Documents.Add(); // make a new doc
+            Microsoft.Office.Interop.Word.Range rng = doc.Range(0, 0); // set the range of words
+            Table wdTable = doc.Tables.Add(rng, dataGridView1.Rows.Count,dataGridView1.Columns.Count); // set the size of the table
+
+            wdTable.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleDouble;
+            wdTable.Borders.InsideLineStyle = WdLineStyle.wdLineStyleSingle;
+
+            try
+            {
+                doc = word.ActiveDocument; // make an active document
+                for(int i=0; i<dataGridView1.Rows.Count-1; i++) // i is the row index
+                {
+                    // for each column take the given row and put the value in the column
+                    for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                        wdTable.Cell(i + 1, j + 1).Range.InsertAfter(dataGridView1.Rows[i].Cells[j].Value.ToString());
+                }
+
+                if(saveFileDialog3.ShowDialog()==DialogResult.OK)
+                {
+                    doc.SaveAs2(saveFileDialog3.FileName); //save to drive
+                    Process.Start("winword.exe", saveFileDialog3.FileName);
+
+                }
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            finally // clean up word and doucment objects
+            {
+                word.Quit();
+                word = null;
+                doc = null;
             }
         }
     }

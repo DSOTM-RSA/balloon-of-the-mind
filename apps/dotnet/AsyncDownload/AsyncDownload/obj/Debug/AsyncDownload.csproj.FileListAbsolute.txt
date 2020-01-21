@@ -1,0 +1,9 @@
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\bin\Debug\AsyncDownload.exe.config
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\bin\Debug\AsyncDownload.exe
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\bin\Debug\AsyncDownload.pdb
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.Form1.resources
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.Properties.Resources.resources
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.csproj.GenerateResource.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.exe
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\dotnet\AsyncDownload\AsyncDownload\obj\Debug\AsyncDownload.pdb

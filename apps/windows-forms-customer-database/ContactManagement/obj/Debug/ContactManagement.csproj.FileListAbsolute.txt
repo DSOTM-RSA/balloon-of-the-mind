@@ -26,3 +26,7 @@ C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-
 C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\ContactManagement.application
 C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\ContactManagement.exe
 C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\ContactManagement.pdb
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\Interop.Microsoft.Office.Core.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\Interop.Microsoft.Office.Interop.Word.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\Interop.VBIDE.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\apps\windows-forms-customer-database\ContactManagement\obj\Debug\ContactManagement.csproj.ResolveComReference.cache

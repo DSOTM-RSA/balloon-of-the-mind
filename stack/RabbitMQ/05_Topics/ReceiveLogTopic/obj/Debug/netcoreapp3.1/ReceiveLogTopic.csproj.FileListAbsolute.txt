@@ -1,0 +1,13 @@
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.exe
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.deps.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.runtimeconfig.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.runtimeconfig.dev.json
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\ReceiveLogTopic.pdb
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.csprojAssemblyReference.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.AssemblyInfoInputs.cache
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.AssemblyInfo.cs
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.csproj.CopyComplete
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.dll
+C:\Users\eoedd\Desktop\locstore\projects\balloon-of-the-mind\stack\RabbitMQ\ReceiveLogTopic\obj\Debug\netcoreapp3.1\ReceiveLogTopic.pdb
