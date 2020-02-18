@@ -47,15 +47,4 @@
 	disown -a && exit
 	
 	ps aux | grep sleep
-	
 
-	
-<<<<<<< HEAD
-=======
-	*ps aux | grep sleep*
-	
-**Exit**
-
-	other
-	
->>>>>>> 4c2b773d82073607fb6b66b0deea1d1d711f6854
