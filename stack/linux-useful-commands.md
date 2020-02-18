@@ -2,7 +2,7 @@
 
 **- Rerun command as root**
 
-	*sudo !!*
+	sudo !!
 	
 **- Open editor**
 
@@ -47,4 +47,8 @@
 	*disown -a && exit*
 	
 	*ps aux | grep sleep*
+	
+**Exit**
+
+	other
 	
